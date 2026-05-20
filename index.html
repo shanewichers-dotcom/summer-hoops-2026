@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer Hoops 2026 — Nooksack Valley Pioneers</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-teams-js/2.19.0/MicrosoftTeams.min.js"></script>
+<style>
+  :root {
+    --purple:     #5B2C8C;
+    --purple-lt:  #EDE4F5;
+    --purple-mid: #8B5CC0;
+    --orange:     #BA7517;
+    --orange-lt:  #FAEEDA;
+    --blue:       #185FA5;
+    --blue-lt:    #E6F1FB;
+    --red:        #993C1D;
+    --red-lt:     #FAECE7;
+    --violet:     #534AB7;
+    --violet-lt:  #EEEDFE;
+    --green:      #3B6D11;
+    --green-lt:   #EAF3DE;
+    --dark:       #1A1A1A;
+    --mid:        #555;
+    --light:      #888;
+    --border:     #E0E0E0;
+    --bg:         #F7F4FB;
+    --white:      #ffffff;
+    --card:       #ffffff;
+    --radius:     10px;
+    --shadow:     0 2px 12px rgba(91,44,140,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--purple);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-logo {
+    width: 36px; height: 22px;
+    background: white;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 11px; color: var(--purple); letter-spacing: -1px;
+  }
+  .header-title { font-size: 15px; font-weight: 700; }
+  .header-sub   { font-size: 11px; opacity: .75; margin-top: 1px; }
+  .header-week  {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    background: var(--white);
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--light);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all .2s;
+    border: none;
+    background: none;
+    font-family: inherit;
+  }
+  .tab.active {
+    color: var(--purple);
+    border-bottom-color: var(--purple);
+    font-weight: 700;
+  }
+  .tab:hover:not(.active) { color: var(--mid); }
+
+  /* ── MAIN CONTENT ── */
+  .content { padding: 16px; max-width: 800px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── WEEK STRIP ── */
+  .week-strip {
+    display: flex; gap: 6px; overflow-x: auto;
+    padding-bottom: 4px; margin-bottom: 16px;
+    scrollbar-width: none;
+  }
+  .week-strip::-webkit-scrollbar { display: none; }
+  .wk-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--light);
+    font-family: inherit;
+    transition: all .2s;
+    text-align: center;
+    min-width: 72px;
+  }
+  .wk-btn.active  { background: var(--purple); border-color: var(--purple); color: white; }
+  .wk-btn.current { border-color: var(--purple); color: var(--purple); }
+  .wk-btn.active.current { background: var(--purple); color: white; }
+  .wk-date { font-size: 9px; font-weight: 400; opacity: .8; display: block; margin-top: 1px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 8px; margin-bottom: 8px;
+  }
+  .card-title { font-size: 14px; font-weight: 700; flex: 1; line-height: 1.3; }
+  .pill {
+    font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .pill-shoot  { background: var(--blue-lt);   color: var(--blue);   }
+  .pill-bh     { background: var(--green-lt);  color: var(--green);  }
+  .pill-combo  { background: var(--violet-lt); color: var(--violet); }
+  .pill-lower  { background: var(--orange-lt); color: var(--orange); }
+  .pill-upper  { background: var(--red-lt);    color: var(--red);    }
+  .pill-rhythm { background: var(--violet-lt); color: var(--violet); }
+  .pill-consol { background: var(--green-lt);  color: var(--green);  }
+  .pill-perf   { background: var(--blue-lt);   color: var(--blue);   }
+
+  .drill-desc { font-size: 12px; color: var(--mid); line-height: 1.6; margin-bottom: 8px; }
+
+  .score-box {
+    background: #F8F4FB; border-radius: 6px;
+    padding: 8px 10px; font-size: 12px;
+    color: var(--dark); margin-bottom: 6px;
+    border-left: 3px solid var(--purple);
+  }
+  .score-label { font-size: 10px; font-weight: 700; color: var(--light); margin-bottom: 2px; }
+
+  .tip-box {
+    background: var(--blue-lt); border-radius: 6px;
+    padding: 8px 10px; font-size: 11.5px;
+    color: var(--blue); font-style: italic;
+    line-height: 1.5;
+  }
+  .tip-label { font-weight: 700; font-style: normal; }
+
+  .phase-note {
+    border-radius: 6px; padding: 8px 10px;
+    font-size: 11.5px; margin: 6px 0;
+    line-height: 1.5;
+  }
+
+  /* ── DIRECTIONS BOX ── */
+  .directions-box {
+    background: var(--purple-lt);
+    border: 1.5px solid var(--purple);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+  .directions-box h3 {
+    font-size: 12px; font-weight: 700;
+    color: var(--purple); margin-bottom: 8px;
+  }
+  .dir-row { margin-bottom: 5px; font-size: 12px; line-height: 1.5; }
+  .dir-label { font-weight: 700; color: var(--purple); }
+
+  /* ── SHOT LEGEND ── */
+  .shot-legend {
+    border-radius: 8px; padding: 10px 12px;
+    margin-bottom: 10px; border-left: 4px solid;
+  }
+  .shot-legend-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+  .shot-legend-rule  { font-size: 11.5px; font-weight: 700; margin-bottom: 3px; }
+  .shot-positions {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;
+  }
+  .shot-pos {
+    background: white; border-radius: 6px;
+    padding: 4px 10px; font-size: 11px; font-weight: 600;
+  }
+
+  /* ── SCORE INPUT ── */
+  .score-input-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .score-input-row input {
+    width: 70px; padding: 6px 8px;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    font-size: 14px; font-family: inherit;
+    background: var(--bg);
+  }
+  .score-input-row input:focus {
+    outline: none; border-color: var(--purple);
+  }
+  .score-input-label { font-size: 11px; color: var(--light); flex: 1; }
+
+  /* ── SUBMIT FORM ── */
+  .form-group { margin-bottom: 12px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--mid); margin-bottom: 4px; display: block; }
+  .form-input, .form-select {
+    width: 100%; padding: 9px 12px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: inherit;
+    background: var(--white);
+  }
+  .form-input:focus, .form-select:focus {
+    outline: none; border-color: var(--purple);
+  }
+  .btn-submit {
+    width: 100%; padding: 12px;
+    background: var(--purple); color: white;
+    border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: background .2s;
+  }
+  .btn-submit:hover { background: #4A2070; }
+
+  /* ── LEADERBOARD ── */
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table th {
+    text-align: left; font-size: 11px;
+    color: var(--light); font-weight: 700;
+    padding: 6px 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  .lb-table td {
+    padding: 10px 8px; font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .lb-table tr:last-child td { border-bottom: none; }
+  .rank-badge {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: inline-flex; align-items: center;
+    justify-content: center; font-size: 12px; font-weight: 700;
+  }
+  .rank-1 { background: #FAC775; color: #412402; }
+  .rank-2 { background: #D3D1C7; color: #2C2C2A; }
+  .rank-3 { background: #F5C4B3; color: #4A1B0C; }
+  .rank-n { background: var(--bg);  color: var(--light); }
+  .prog-bar  { height: 4px; background: var(--border); border-radius: 2px; margin-top: 3px; }
+  .prog-fill { height: 4px; background: var(--purple); border-radius: 2px; }
+  .metric-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+  .metric {
+    background: var(--card); border-radius: 8px;
+    padding: 12px; text-align: center;
+    border: 1px solid var(--border);
+  }
+  .metric-val   { font-size: 22px; font-weight: 800; color: var(--purple); }
+  .metric-label { font-size: 11px; color: var(--light); margin-top: 2px; }
+
+  /* ── COUNTDOWN ── */
+  .countdown-bar {
+    background: var(--purple);
+    color: white; border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 14px;
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  .cd-main  { font-size: 20px; font-weight: 800; }
+  .cd-sub   { font-size: 12px; opacity: .8; margin-top: 2px; }
+  .cd-pct   { font-size: 18px; font-weight: 800; }
+  .cd-plabel{ font-size: 11px; opacity: .7; text-align: right; }
+  .summer-bar { height: 6px; background: rgba(255,255,255,.25); border-radius: 3px; width: 100%; margin-top: 8px; }
+  .summer-fill { height: 6px; background: white; border-radius: 3px; transition: width .5s; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--purple); color: white;
+    padding: 10px 20px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0; transition: all .3s; z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--light); font-size: 13px; }
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .section-head {
+    font-size: 11px; font-weight: 700; color: var(--light);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: 8px; margin-top: 4px;
+  }
+  .current-badge {
+    background: var(--purple); color: white;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 10px; margin-left: 6px;
+  }
+  .integrity-note {
+    background: #FFF8E7; border-left: 3px solid var(--orange);
+    border-radius: 0 6px 6px 0; padding: 8px 10px;
+    font-size: 11.5px; color: #633806; margin-top: 8px; line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <div class="header-logo">NV</div>
+    <div>
+      <div class="header-title">Summer Hoops 2026</div>
+      <div class="header-sub">Nooksack Valley Pioneers · June 15 – Aug 16</div>
+    </div>
+  </div>
+  <div class="header-week" id="header-week">Loading...</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('home')">🏠 Home</button>
+  <button class="tab" onclick="switchTab('workouts')">📋 Workouts</button>
+  <button class="tab" onclick="switchTab('log')">✏️ Log Score</button>
+  <button class="tab" onclick="switchTab('board')">🏆 Leaderboard</button>
+  <button class="tab" onclick="switchTab('explorer')">🔬 Explorer</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOME TAB
+══════════════════════════════════════════ -->
+<div id="tab-home" class="section active">
+  <div class="content">
+    <div class="countdown-bar" id="countdown-bar">
+      <div>
+        <div class="cd-main" id="cd-main">—</div>
+        <div class="cd-sub"  id="cd-sub">Loading...</div>
+      </div>
+      <div style="text-align:right">
+        <div class="cd-plabel">Summer progress</div>
+        <div class="cd-pct" id="cd-pct">—</div>
+      </div>
+      <div class="summer-bar" style="flex-basis:100%">
+        <div class="summer-fill" id="summer-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">How this works</div>
+      </div>
+      <div class="dir-row"><span class="dir-label">1.</span> Each week: complete the Shooting DL blocks, Ball Handling drill, and Combo drill.</div>
+      <div class="dir-row"><span class="dir-label">2.</span> Shooting — practice using position A, B, or C all week. Submit scores from position A (behind the 3PT line) only.</div>
+      <div class="dir-row"><span class="dir-label">3.</span> You can practice all activities as many times as you want. Record your best scores by Sunday.</div>
+      <div class="dir-row"><span class="dir-label">4.</span> Log your scores in the <strong>Log Score</strong> tab and check the <strong>Leaderboard</strong> to see how you stack up.</div>
+      <div class="dir-row"><span class="dir-label">5.</span> Use the <strong>Explorer</strong> tab to record your preferred shooting form after each phase.</div>
+      <div class="integrity-note">
+        🤝 <strong>Be honest with your scores.</strong> Do not make up or exaggerate your numbers. Your coaches trust you and your teammates are counting on accurate results. <strong>Integrity matters.</strong>
+      </div>
+    </div>
+
+    <div class="section-head">9-Week Schedule</div>
+    <div id="schedule-cards"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     WORKOUTS TAB
+══════════════════════════════════════════ -->
+<div id="tab-workouts" class="section">
+  <div class="content">
+    <div class="week-strip" id="workout-week-strip"></div>
+    <div id="workout-content"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LOG SCORE TAB
+══════════════════════════════════════════ -->
+<div id="tab-log" class="section">
+  <div class="content">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">📝 Log Your Best Scores</div>
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input id="log-name" class="form-input" placeholder="First Last">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Week</label>
+        <select id="log-week" class="form-select"></select>
+      </div>
+      <div id="log-drill-inputs"></div>
+      <div class="integrity-note" style="margin-bottom:12px">
+        Submit your best score from that week. Shooting scores must be from position A (behind the 3PT line).
+      </div>
+      <button class="btn-submit" onclick="submitScore()">Submit Score ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LEADERBOARD TAB
+══════════════════════════════════════════ -->
+<div id="tab-board" class="section">
+  <div class="content">
+    <div class="week-strip" id="board-week-strip"></div>
+    <div class="metric-row" id="board-metrics">
+      <div class="metric"><div class="metric-val">—</div><div class="metric-label">Players posted</div></div>
+      <div class="metric"><div class="metric-val">—</div><div class="metric-label">Scores logged</div></div>
+      <div class="metric"><div class="metric-val">—</div><div class="metric-label">Top score</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title" id="board-title" style="margin-bottom:12px">Leaderboard</div>
+      <div id="board-content"><div class="empty-state">No scores yet — be the first to post!</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     EXPLORER TAB
+══════════════════════════════════════════ -->
+<div id="tab-explorer" class="section">
+  <div class="content">
+    <div class="card" style="border:2px solid var(--purple)">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px">
+        ⚠️ What is this page?
+      </div>
+      <div style="font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:10px">
+        This is a <strong>reference and recording sheet</strong> — it is NOT a standalone workout. Each variable is introduced in a specific week as part of your weekly workout. After completing each week's shooting drill, come back here and write your preferred option.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:6px">Variable Schedule:</div>
+      <div id="explorer-schedule"></div>
+    </div>
+
+    <div id="explorer-phases"></div>
+
+    <div class="card" style="border:2px solid var(--purple);margin-top:4px">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px">
+        My Complete Preferred Form — Confirmation Test
+      </div>
+      <div style="font-size:12px;color:var(--mid);margin-bottom:10px;line-height:1.5">
+        After completing all 3 phases, shoot 20 shots from behind the 3PT line using your full preferred combination. Complete this after Week 9 — on or after August 17.
+      </div>
+      <div id="confirmation-summary" style="font-size:12px;color:var(--mid);margin-bottom:10px;line-height:1.8"></div>
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input id="explorer-name" class="form-input" placeholder="First Last">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Makes out of 20 (from behind the 3PT line)</label>
+        <input id="explorer-score" type="number" min="0" max="20" class="form-input" placeholder="e.g. 14">
+      </div>
+      <button class="btn-submit" onclick="saveExplorer()">Save My Form ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── TEAMS INIT ────────────────────────────────────────
+if (typeof microsoftTeams !== 'undefined') {
+  microsoftTeams.initialize();
+}
+
+// ── DATES & WEEKS ────────────────────────────────────
+const WEEKS = [
+  {n:1, dates:'June 15–21',    phase:'lower',   label:'Lower body — Phase 1'},
+  {n:2, dates:'June 22–28',    phase:'lower',   label:'Lower body — Phase 1'},
+  {n:3, dates:'June 29–Jul 5', phase:'lower',   label:'Lower body — Phase 1'},
+  {n:4, dates:'July 6–12',     phase:'upper',   label:'Upper body — Phase 2'},
+  {n:5, dates:'July 13–19',    phase:'upper',   label:'Upper body — Phase 2'},
+  {n:6, dates:'July 20–26',    phase:'rhythm',  label:'Rhythm & feel — Phase 3'},
+  {n:7, dates:'July 27–Aug 2', phase:'rhythm',  label:'Rhythm & feel — Phase 3'},
+  {n:8, dates:'Aug 3–9',       phase:'consol',  label:'Consolidation'},
+  {n:9, dates:'Aug 10–16',     phase:'perf',    label:'Performance'},
+];
+const START = new Date('2025-06-15');
+const END   = new Date('2025-08-16');
+
+function currentWeekNum() {
+  const now = new Date();
+  if (now < WEEKS[0].start) return 1;
+  for (let i = 0; i < WEEKS.length; i++) {
+    const s = new Date('2025-06-15');
+    s.setDate(s.getDate() + i * 7);
+    const e = new Date(s); e.setDate(s.getDate() + 6);
+    if (now >= s && now <= e) return i + 1;
+  }
+  return now > END ? 9 : 1;
+}
+
+const CUR_WEEK = currentWeekNum();
+
+// ── DRILL DATA ────────────────────────────────────────
+const DRILLS = {
+  1: {
+    shoot: {
+      name: 'Lower Body Explorer — Takeoff & Landing Foot',
+      desc: 'Right wing only. Shoot 3 reps off left foot takeoff · 3 off right foot · 3 off jump stop. Then 3 landing left-dominant · 3 right-dominant · 3 both feet. 18 exploration shots. Then 5 confirmation shots with your best combo.',
+      score: 'Makes out of 5 confirmation shots',
+      max: 5,
+      phase: 'lower',
+      tip: 'Most players have never consciously noticed which foot they push off. This is the most foundational variable — hip alignment, balance, and weight transfer all trace back to it.'
+    },
+    bh: {
+      name: 'Two-Ball Stationary — Dribble Count',
+      desc: 'Set 1 (30s): Both balls same-time. Count RIGHT hand touches × 2. Set 2 (30s): Alternating — count RIGHT hand touches × 2. Set 3 (30s): One high/one low — count HIGH touches only.',
+      score: 'Set 1 R×2 = ___  Set 2 R×2 = ___  Set 3 high = ___  TOTAL',
+      max: 999,
+      tip: 'Eyes up — never look at the ball. Challenge: try with eyes closed. If your count drops, your hands still rely on vision.'
+    },
+    combo: {
+      name: 'Chair Color-Call — PAC Finish Drill',
+      desc: 'Chair as defender in Zone 1 (1 step inside 3PT), Zone 2 (halfway to key), or Zone 3 (in key). Partner or randomizer calls RED (go right) · BLUE (go left) · ORANGE (pull-up) as you cross half-court. Move chair every 3 reps. 12 reps. Vary your finish every time.',
+      score: 'Makes out of 12',
+      max: 12,
+      tip: 'Two layers of PAC: chair zone changes the spatial problem, color is called mid-approach so no pre-planning is possible.'
+    }
+  },
+  2: {
+    shoot: {
+      name: 'Lower Body Explorer — Hop Direction & Pivot/Turn',
+      desc: 'Block 1: 3 shots hopping left · 3 right · 3 back · 3 forward. Block 2: 3 quarter-turn right · 3 quarter-turn left · 3 already square. 21 exploration shots + 5 confirmation.',
+      score: 'Makes out of 5 confirmation shots', max: 5, phase: 'lower',
+      tip: 'Hop direction is the most game-realistic variable — a defender gives you the direction. Discover which hop your body handles best.'
+    },
+    bh: {
+      name: 'Wall Touch Dribble Challenge',
+      desc: 'Arm\'s length from wall. R1 (30s) Crossover — touch wall on release. R2 (30s) Through legs LEFT foot forward. R3 (30s) Through legs RIGHT foot forward. R4 (30s) Behind back. Count wall touches each round. Rest 15s between rounds.',
+      score: 'R1=___  R2=___  R3=___  R4=___  TOTAL WALL TOUCHES', max: 999,
+      tip: 'You cannot fake the transfer and still reach the wall. The wall IS the defender. Eyes closed for added challenge.'
+    },
+    combo: {
+      name: '3-Object Read & Shoot',
+      desc: '3 objects: 1=left wing, 2=top of key, 3=right wing (all on or behind 3PT line). Start at half-court. Roll ball toward baseline and sprint after it. Partner calls 1, 2, or 3 WHILE you are sprinting — must be called before you pick up the ball. Shoot 3PT from that object. 12 reps.',
+      score: 'Makes out of 12', max: 12,
+      tip: 'The number called mid-sprint forces a direction change while your body is already moving — exactly like reading a transition play.'
+    }
+  },
+  3: {
+    shoot: {
+      name: 'Lower Body Explorer — Stance, Knee Load & Balance',
+      desc: 'Block 1: 3 narrow · 3 normal · 3 wide stance. Block 2: 3 minimal bend · 3 medium dip · 3 deep load. Block 3: 3 weight forward · 3 centered · 3 back. 27 exploration shots + 5 confirmation with full preferred lower body combo.',
+      score: 'Makes out of 5 confirmation shots', max: 5, phase: 'lower',
+      tip: 'Foot width and knee load interact strongly. Wide + deep = stable. Narrow + minimal = quick release. Try all combinations.'
+    },
+    bh: {
+      name: 'Speed Dribble + Random Stop — Jump Stop Count',
+      desc: 'Start at baseline. Dribble full speed to far baseline with strong hand. Use a random interval timer app or have partner shout STOP at random moments. Every stop = execute a jump stop with BOTH feet landing simultaneously. 6 full-court lengths.',
+      score: 'Jump stops with both feet landing at the same time  ___ / ___', max: 12,
+      tip: 'One foot first = a travel. Both feet simultaneously = a real jump stop. React at full speed — no slowing down before the stop.'
+    },
+    combo: {
+      name: 'Variable Finish + Spin Ball 3PT — 3 Rounds',
+      desc: 'Each round: choose one rule for Part 1 (make any way · backboard only · swish only). PART 1: 5 shots within 1–4 feet. Mix hand, position, and starting direction (back to hoop, facing sideline, etc.) every shot. No dribbles. PART 2: Spin ball from near basket, sprint to catch it, shoot 3PT. Adjust with dribbles if too far/close. 3 shots. Scoring: Part 1 = 1pt each. Part 2 = 2pts each. Max 11pts per round.',
+      score: 'R1:___/11  R2:___/11  R3:___/11  GRAND TOTAL:___/33', max: 33,
+      tip: 'The spin ball creates a different catch angle every rep — just like a real pass in a game.'
+    }
+  },
+  4: {
+    shoot: {
+      name: 'Upper Body Explorer — Arc & Ball Set Point',
+      desc: 'Block 1: Right wing — 3 flat arc · 3 medium arc · 3 high arc. Note most makes AND most repeatable. Block 2: Same spot — 3 chin level · 3 eye level · 3 belly button level. 18 exploration shots + 5 confirmation with preferred arc + set point.',
+      score: 'Makes out of 5 confirmation shots', max: 5, phase: 'upper',
+      tip: 'Eye level = shorter release path. Belly button level = longest push path, needs more arc. Feel which loads most naturally.'
+    },
+    bh: {
+      name: 'Crossover Cone Gauntlet — Dribble Count',
+      desc: '5 objects in a straight line, 3 feet apart, covering half court. Zigzag through — push ball to outside of each object. Run 1: Crossovers only. Run 2: Between the legs only. Run 3: Behind the back only. Run 4: Combo (any 2 moves). Run 5: Combo (all 3 moves). Count every dribble each run. Add all 5 runs for total.',
+      score: 'R1:___ R2:___ R3:___ R4:___ R5:___  TOTAL', max: 999,
+      tip: 'Fewer total dribbles = longer, more powerful pushes. Track your total each week — lower number means more efficient handle.'
+    },
+    combo: {
+      name: 'Triple Play Shooting Series',
+      desc: '3 plays back to back = 1 round. 10 rounds. PLAY 1: Self-toss from under hoop (1 bounce). Catch in post — vary your spot and move (baseline or middle). PLAY 2: Toss 8–10 feet to any spot on/inside 3PT. Sprint to catch. Pump fake then attack (drive or step-back). PLAY 3: Toss 8–10 feet to different 3PT spot. Sprint to catch. Pump fake then 1–2 dribbles and pull-up.',
+      score: 'Total makes out of 30  ___ / 30', max: 30,
+      tip: 'Running to the self-toss simulates coming off a screen — you are never standing still when you catch.'
+    }
+  },
+  5: {
+    shoot: {
+      name: 'Upper Body Explorer — Guide Hand',
+      desc: '3 spots (both wings + top of key). At each: 3 shots guide hand front · 3 side · 3 behind. 27 exploration shots. Watch ball spin — wobble means guide hand interference, clean backspin means shooting hand in control. 5 confirmation shots.',
+      score: 'Makes out of 5 confirmation shots', max: 5, phase: 'upper',
+      tip: 'Guide hand behind the ball surprises many players — it removes interference immediately and produces the cleanest release.'
+    },
+    bh: {
+      name: 'Two-Ball Cone Slalom — Dribble Count',
+      desc: '8 objects in a straight line, 4 feet apart. Dribble both balls simultaneously, weaving around the outside of each object. Both balls bounce at same time. Runs 1 & 3: count RIGHT hand touches × 2. Runs 2 & 4: count LEFT hand touches × 2. 4 runs total.',
+      score: 'R1 R×2=___  R2 L×2=___  R3 R×2=___  R4 L×2=___  Best run:___', max: 999,
+      tip: 'If your left-hand count is significantly lower than your right, that is your weaker hand showing itself.'
+    },
+    combo: {
+      name: 'Sprint-Read-Shoot',
+      desc: 'Start under basket. Odd reps: dribble to half-court with STRONG hand, switch to weak hand back. Even reps: start with WEAK hand, switch to strong at half-court. Touch a DIFFERENT spot on the half-court line each rep. As you cross the 3PT line — randomizer or partner calls RIGHT or LEFT. Attack that side. Vary finish every rep. 12 reps.',
+      score: 'Makes out of 12  ___ / 12', max: 12,
+      tip: 'Different half-court touch points mean every return is at a different angle — corner, wing, or straight down the middle.'
+    }
+  },
+  6: {
+    shoot: {
+      name: 'Rhythm Explorer — Shot Rhythm',
+      desc: '5 spots. At each: 2 shots one-motion (no pause) · 2 two-motion (pause at set) · 2 hesitation (slight hitch). 30 exploration shots + 5 confirmation with rhythm layered on full lower + upper form.',
+      score: 'Makes out of 5 confirmation shots', max: 5, phase: 'rhythm',
+      tip: 'Fast = quickest trigger. Slow = maximum control. Which do you naturally default to when tired?'
+    },
+    bh: {
+      name: 'Combo Attack Sequence — Rep Count',
+      desc: 'RIGHT HAND START: Step 1 — Crossover R→L. Step 2 — Through right leg L→R (right foot fwd). Step 3 — Behind back R→L. Step 4 — Hesitation with left hand. Step 5 — Step-back with left hand. Repeat cycle. Next round starts with LEFT HAND (mirror). Alternate starting hand every cycle. 2 minutes. Count every completed full transfer.',
+      score: 'Total completed steps in 2 minutes  ___  (Goal: 80+)', max: 999,
+      tip: 'If your count drops when your weak hand starts the cycle, that is the hand to focus on.'
+    },
+    combo: {
+      name: 'Box Drill + Finish',
+      desc: 'Place ball in different floor spot inside box before each round (left block, right block, paint, elbow). Box pattern: START bottom-left → SHUFFLE right to bottom-right → SPRINT up to top-right → SHUFFLE left to top-left → BACK PEDAL to bottom-left. Sprint to ball, pick it up, attack, finish. Vary finish every rep. 8 rounds.',
+      score: 'Finishes made  ___ / 8  Types: ☐1-foot ☐2-foot ☐Reverse ☐Wrong-hand ☐Floater ☐Pull-up', max: 8,
+      tip: 'The ball location changes every round so your finish decision is always a real read, not a scripted move.'
+    }
+  },
+  7: {
+    shoot: {
+      name: 'Feel Explorer — Follow-Through & Eye Target',
+      desc: 'Block 1: 3 quick snap · 3 normal snap · 3 long snap (until ball hits ground). Block 2: 3 focus front rim · 3 back rim · 3 through the net (soft focus). 18 exploration shots + 5 confirmation with complete preferred form (all 13 variables).',
+      score: 'Makes out of 5 confirmation shots', max: 5, phase: 'rhythm',
+      tip: '"Through the net" or "back rim" focus often raises arc naturally — the feel produces the outcome without consciously thinking about arc.'
+    },
+    bh: {
+      name: 'Weak Hand Dribble Count',
+      desc: 'Strong hand behind back or in pocket — weak hand only. PART 1: Start under basket, dribble full speed to half-court and back = 1 length. 4 lengths. Eyes up. Count every bounce. PART 2: 60 seconds stationary weak-hand dribble. Count every touch. PART 3: 60 seconds figure-8 with weak hand only at shin height or below. Count every bounce.',
+      score: 'Part 1:___  Part 2:___  Part 3:___  TOTAL:___', max: 999,
+      tip: 'Eyes up on Part 1 — if you have to look at the ball you are not ready to use this hand in a game.'
+    },
+    combo: {
+      name: '3-Spot Challenge — Make 3 Before You Miss 5',
+      desc: 'Pick any spot behind 3PT line. Goal: make 3 before you miss 5 (the 3 don\'t need to be consecutive). Made 3 = spot COMPLETE, move to new spot. Missed 5 before making 3 = spot OVER, move on. 8 minutes total. Score = spots completed.',
+      score: 'Spots completed (3 makes before 5 misses): ___  Spots attempted: ___', max: 999,
+      tip: 'The 5-miss limit means you move on just like in a game. A player completing 4+ spots in 8 minutes is finding their range.'
+    }
+  },
+  8: {
+    shoot: {
+      name: 'Full Form Under Fatigue — Streak Challenge',
+      desc: 'Sprint baseline-to-baseline twice. Immediately shoot your complete preferred form (all 13 variables) from any spot behind the 3PT line. Repeat 15 times. Count your longest consecutive made-shot streak.',
+      score: 'Longest made streak: ___', max: 15, phase: 'consol',
+      tip: 'Fatigue exposes what is genuinely yours. Which variable breaks down first? That is your early-season focus.'
+    },
+    bh: {
+      name: 'Full Combo Gauntlet — Dribble Count',
+      desc: 'No rest between parts. PART 1 (30s): Two-ball alternating — count right-hand touches only. PART 2: 10 dribbling figure-8s EYES CLOSED (right hand through left leg, left hand through right leg = 1). Eyes open = rep doesn\'t count. Record count and time. PART 3: 5-object slalom, both balls. Count right-hand touches. PART 4: 10 crossover attacks from 3PT line. Mix crossover type and transfer direction every rep. Attack basket, vary finish.',
+      score: 'Part 1 R:___  Part 2: ___/10 in ___sec  Part 3 R:___  Part 4 makes:___/10', max: 999,
+      tip: 'Part 2 eyes closed is the hardest. Track your time week over week — faster means your touch genuinely improved.'
+    },
+    combo: {
+      name: 'Mini Game Simulation',
+      desc: 'Place large object (chair/bag/cone) 1 step inside 3PT line — move it before each possession. Start 1 step behind 3PT line, vary your spot. Randomizer 0–9: 1–3 = 1 dribble pull-up (~15 feet). 4–6 = drive LEFT and finish. 7–9 = drive RIGHT and finish. 0 = 1 dribble toward basket then step-back. Read object as you attack. 8 possessions.',
+      score: 'Makes  ___ / 8', max: 8,
+      tip: 'Object is always 1 step inside 3PT so it is in play on every possession, even on pull-ups.'
+    }
+  },
+  9: {
+    shoot: {
+      name: 'Pre-Season Benchmark — Game-Speed Performance',
+      desc: 'Full intensity, 5 minutes. Off screens (cone), off dribble hand-offs (roll ball), catch-and-shoot all spots, pull-ups in transition. Apply your complete preferred form for all 13 variables the entire session.',
+      score: 'Total makes in 5 minutes: ___', max: 40, phase: 'perf',
+      tip: 'This is not practice — it is performance. You spent 9 weeks building your form. It belongs to you. Trust it completely.'
+    },
+    bh: {
+      name: 'Full Handle Benchmark — Dribble Count',
+      desc: 'Repeat Week 1 two-ball series: Set 1 (30s same-time, R×2) · Set 2 (30s alternating, R×2) · Set 3 (30s high/low, high touches only). Then repeat Week 2 wall touch challenge: all 4 rounds × 30s, count wall touches.',
+      score: 'Two-ball total:___  Wall touch total:___  Combined:___  (Compare to Week 1 & 2)', max: 999,
+      tip: 'The gap between your Week 1 and Week 9 numbers is the measurable output of the summer.'
+    },
+    combo: {
+      name: 'Decision-Making Pressure Game',
+      desc: 'Start under basket. Spin ball outside 3PT line — different direction every rep. Sprint, catch, pivot and SQUARE UP before doing anything. Partner stands near half-court — as you square up they point: LEFT = shot fake first then drive left. RIGHT = shot fake first then drive right. UP = shoot from where you are. Shot fake is not optional on left/right. Rebound, return under basket. 20 possessions.',
+      score: 'Makes  ___ / 20', max: 20,
+      tip: 'Squaring up before reacting forces proper footwork on every catch. The partner at half-court means you must look up and find the signal — exactly like reading a live defender.'
+    }
+  }
+};
+
+const DL_PHASES = [
+  {title: 'Lower body — Phase 1 (Weeks 1–3) · Starts June 15', key: 'lower', vars: [
+    {name:'Takeoff foot',    opts:['Off left foot','Off right foot','Jump stop (both)'], week:1},
+    {name:'Landing foot',    opts:['Left foot leads','Right foot leads','Both feet land together'], week:1},
+    {name:'Hop direction',   opts:['Hop left','Hop right','Hop back (step-back)'], week:2},
+    {name:'Pivot / turn',    opts:['Quarter turn right','Quarter turn left','Already square'], week:2},
+    {name:'Foot width',      opts:['Narrow (inside shoulders)','Normal (shoulder width)','Wide (outside shoulders)'], week:3},
+    {name:'Hip & knee load', opts:['Minimal bend','Medium dip','Deep load'], week:3},
+    {name:'Balance weight',  opts:['Forward onto toes','Centered','Back onto heels'], week:3},
+  ]},
+  {title: 'Upper body — Phase 2 (Weeks 4–5) · Starts July 6', key: 'upper', vars: [
+    {name:'Arc',             opts:['Flat arc','Medium arc','High arc (rainbow)'], week:4},
+    {name:'Ball set point',  opts:['Eye level','Chin level','Belly button level'], week:4},
+    {name:'Guide hand',      opts:['Front of ball','Side of ball','Behind ball'], week:5},
+  ]},
+  {title: 'Rhythm & feel — Phase 3 (Weeks 6–7) · Starts July 20', key: 'rhythm', vars: [
+    {name:'Shot rhythm',     opts:['Fast — release in 1 second','Normal speed','Slow — full motion 3 seconds'], week:6},
+    {name:'Follow-through',  opts:['Quick snap','Normal snap','Long snap (until ball hits ground)'], week:7},
+    {name:'Eye target',      opts:['Front rim','Back rim','Through the net (soft focus)'], week:7},
+  ]},
+];
+
+const PHASE_COLORS = {
+  lower:  {bg:'var(--orange-lt)', color:'var(--orange)', border:'var(--orange)'},
+  upper:  {bg:'var(--red-lt)',    color:'var(--red)',    border:'var(--red)'},
+  rhythm: {bg:'var(--violet-lt)', color:'var(--violet)', border:'var(--violet)'},
+  consol: {bg:'var(--green-lt)',  color:'var(--green)',  border:'var(--green)'},
+  perf:   {bg:'var(--blue-lt)',   color:'var(--blue)',   border:'var(--blue)'},
+};
+
+// ── STATE ─────────────────────────────────────────────
+let curWorkoutWeek = CUR_WEEK;
+let curBoardWeek   = CUR_WEEK;
+let scores  = {};
+let prefs   = {};
+try { scores = JSON.parse(localStorage.getItem('sh26_scores') || '{}'); } catch(e){}
+try { prefs  = JSON.parse(localStorage.getItem('sh26_prefs')  || '{}'); } catch(e){}
+
+function save() {
+  try {
+    localStorage.setItem('sh26_scores', JSON.stringify(scores));
+    localStorage.setItem('sh26_prefs',  JSON.stringify(prefs));
+  } catch(e){}
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${t}')"]`).classList.add('active');
+  document.getElementById('tab-' + t).classList.add('active');
+  if (t === 'board')    renderBoard();
+  if (t === 'log')      renderLogInputs();
+  if (t === 'explorer') renderExplorer();
+}
+
+// ── COUNTDOWN ─────────────────────────────────────────
+function updateCountdown() {
+  const now = new Date();
+  const total = END - START;
+  const elapsed = Math.max(0, now - START);
+  const pct = Math.min(100, Math.round(elapsed / total * 100));
+  const main = document.getElementById('cd-main');
+  const sub  = document.getElementById('cd-sub');
+  const fill = document.getElementById('summer-fill');
+  const cdpct= document.getElementById('cd-pct');
+  const hw   = document.getElementById('header-week');
+
+  if (now < START) {
+    const days = Math.ceil((START - now) / 86400000);
+    main.textContent = `${days} day${days!==1?'s':''} to go`;
+    sub.textContent  = 'Program starts June 15, 2026';
+    hw.textContent   = 'Starts June 15';
+  } else if (now > END) {
+    main.textContent = 'Program complete! 🏆';
+    sub.textContent  = 'Season starts soon — trust your form';
+    hw.textContent   = 'Summer complete';
+  } else {
+    const days = Math.ceil((END - now) / 86400000);
+    const wn   = CUR_WEEK;
+    const w    = WEEKS[wn-1];
+    main.textContent = `Week ${wn} of 9`;
+    sub.textContent  = `${days} day${days!==1?'s':''} remaining · ${w.label}`;
+    hw.textContent   = `Week ${wn} · ${w.dates}`;
+  }
+  if (fill)  fill.style.width = pct + '%';
+  if (cdpct) cdpct.textContent = pct + '%';
+}
+
+// ── SCHEDULE CARDS (Home) ─────────────────────────────
+function renderSchedule() {
+  const el = document.getElementById('schedule-cards');
+  const schedRows = [
+    [1,'June 15–21',    'Lower body',    'Takeoff foot · Landing foot — 30 shots'],
+    [2,'June 22–28',    'Lower body',    'Hop direction · Pivot/turn — 30 shots'],
+    [3,'June 29–Jul 5', 'Lower body',    'Foot width · Knee load · Balance — 45 shots'],
+    [4,'July 6–12',     'Upper body',    'Arc · Ball set point — 30 shots'],
+    [5,'July 13–19',    'Upper body',    'Guide hand — 15 shots'],
+    [6,'July 20–26',    'Rhythm & feel', 'Shot rhythm — 15 shots'],
+    [7,'July 27–Aug 2', 'Rhythm & feel', 'Follow-through · Eye target — 30 shots'],
+    [8,'Aug 3–9',       'Consolidation', 'Full form under fatigue — 15 shots'],
+    [9,'Aug 10–16',     'Performance',   'Game-speed benchmark — 15 shots'],
+  ];
+  const phaseKey = ['','lower','lower','lower','upper','upper','rhythm','rhythm','consol','perf'];
+  el.innerHTML = schedRows.map(([wn, dates, phase, focus]) => {
+    const pc = PHASE_COLORS[phaseKey[wn]] || {};
+    const isCur = wn === CUR_WEEK;
+    return `<div class="card" style="border-left:4px solid ${pc.border||'var(--border)'};${isCur?'border:2px solid var(--purple)':''}">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <div>
+          <span style="font-weight:700;font-size:13px">Week ${wn}</span>
+          ${isCur ? '<span class="current-badge">CURRENT</span>' : ''}
+          <span style="font-size:11px;color:var(--light);margin-left:6px">${dates}</span>
+        </div>
+        <span class="pill pill-${phaseKey[wn]}">${phase}</span>
+      </div>
+      <div style="font-size:12px;color:var(--mid);margin-top:4px">${focus}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── WEEK STRIP ────────────────────────────────────────
+function buildWeekStrip(containerId, curSel, onClickFn) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = WEEKS.map(w => {
+    const isCur = w.n === CUR_WEEK;
+    const isSel = w.n === curSel;
+    return `<button class="wk-btn ${isSel?'active':''} ${isCur&&!isSel?'current':''}"
+      onclick="${onClickFn}(${w.n})">
+      Week ${w.n}
+      <span class="wk-date">${w.dates}</span>
+    </button>`;
+  }).join('');
+}
+
+// ── WORKOUTS ──────────────────────────────────────────
+function setWorkoutWeek(n) {
+  curWorkoutWeek = n;
+  buildWeekStrip('workout-week-strip', n, 'setWorkoutWeek');
+  renderWorkouts();
+}
+
+function drillCard(drill, typeClass, typeLabel) {
+  const pc = PHASE_COLORS[drill.phase] || {};
+  const phaseNote = drill.phase ? `
+    <div class="phase-note" style="background:${pc.bg};border-left:3px solid ${pc.border}">
+      <strong style="color:${pc.color}">DL NOTE:</strong>
+      <span style="color:${pc.color};font-size:11.5px"> Log your preferred option in the Explorer tab after this session.</span>
+    </div>` : '';
+  return `<div class="card">
+    <div class="card-header">
+      <div class="card-title">${drill.name}</div>
+      <span class="pill ${typeClass}">${typeLabel}</span>
+    </div>
+    <div class="drill-desc">${drill.desc}</div>
+    <div class="score-box"><div class="score-label">SCORE</div>${drill.score}</div>
+    ${phaseNote}
+    <div class="tip-box"><span class="tip-label">TIP: </span>${drill.tip}</div>
+  </div>`;
+}
+
+function renderWorkouts() {
+  const wn = curWorkoutWeek;
+  const w  = WEEKS[wn-1];
+  const d  = DRILLS[wn];
+  const pc = PHASE_COLORS[w.phase] || {};
+
+  const dirHtml = `
+    <div class="directions-box">
+      <h3>Week ${wn} · ${w.dates} · ${w.label}</h3>
+      <div class="dir-row"><span class="dir-label">SHOOTING FOCUS:</span> This week focus only on the variable(s) below. The rest of your form is up to you — don't try to change everything at once.</div>
+      <div class="dir-row"><span class="dir-label">PRACTICE ALL WEEK:</span> You can do all activities as many times as you want.</div>
+      <div class="dir-row" style="font-weight:700;color:var(--purple)">SUBMIT BY SUNDAY: Record your best scores. Shooting must be from Position A (behind 3PT line) only.</div>
+    </div>`;
+
+  const shotLegend = `
+    <div class="shot-legend" style="background:${pc.bg};border-color:${pc.border}">
+      <div class="shot-legend-title" style="color:${pc.color}">SHOT POSITIONS</div>
+      <div class="shot-legend-rule" style="color:${pc.color}">
+        PRACTICE using A, B, or C all week. &nbsp;|&nbsp; SUBMIT: Position A only.
+      </div>
+      <div class="shot-positions">
+        <span class="shot-pos" style="color:${pc.color}">A — Behind 3PT line</span>
+        <span class="shot-pos" style="color:${pc.color}">B — Heels on 3PT line</span>
+        <span class="shot-pos" style="color:${pc.color}">C — 1 step inside</span>
+      </div>
+    </div>`;
+
+  const finalNote = wn === 9 ? `
+    <div class="card" style="border:2px solid var(--purple);background:var(--purple-lt)">
+      <div style="font-size:14px;font-weight:700;color:var(--purple);margin-bottom:8px">
+        🏀 Final Step — Shooting Explorer Confirmation Test
+      </div>
+      <div style="font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:8px">
+        You have now completed all 9 weeks. Go to the <strong>Explorer</strong> tab to complete your final confirmation test. Shoot 20 shots from behind the 3PT line using your full preferred form for all 13 variables.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--purple)">
+        This is the moment your summer comes together — trust the form your body discovered.
+      </div>
+    </div>` : '';
+
+  document.getElementById('workout-content').innerHTML =
+    dirHtml +
+    '<div class="section-head">SHOOTING — DIFFERENTIATED LEARNING</div>' +
+    shotLegend +
+    drillCard(d.shoot, 'pill-shoot', 'SHOOTING') +
+    '<div class="section-head">BALL HANDLING</div>' +
+    drillCard(d.bh, 'pill-bh', 'BALL HANDLING') +
+    '<div class="section-head">COMBO</div>' +
+    drillCard(d.combo, 'pill-combo', 'COMBO') +
+    finalNote;
+}
+
+// ── LOG SCORE ─────────────────────────────────────────
+function renderLogInputs() {
+  const wsel = document.getElementById('log-week');
+  if (!wsel.options.length) {
+    WEEKS.forEach(w => {
+      const o = document.createElement('option');
+      o.value = w.n;
+      o.textContent = `Week ${w.n} (${w.dates})`;
+      if (w.n === CUR_WEEK) o.selected = true;
+      wsel.appendChild(o);
+    });
+  }
+  updateLogDrillInputs();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const wsel = document.getElementById('log-week');
+  if (wsel) wsel.addEventListener('change', updateLogDrillInputs);
+});
+
+function updateLogDrillInputs() {
+  const wn = parseInt(document.getElementById('log-week').value);
+  const d  = DRILLS[wn];
+  document.getElementById('log-drill-inputs').innerHTML = [
+    ['shoot', 'Shooting score (makes from Position A)', d.shoot.max],
+    ['bh',    'Ball Handling score (total dribbles / count)', 999],
+    ['combo', 'Combo score', d.combo.max],
+  ].map(([key, label, mx]) => `
+    <div class="form-group">
+      <label class="form-label">${label}</label>
+      <input id="log-${key}" type="number" min="0" max="${mx}" class="form-input" placeholder="Your best score">
+    </div>`).join('');
+}
+
+function submitScore() {
+  const name = document.getElementById('log-name').value.trim();
+  if (!name) { showToast('Enter your name first'); return; }
+  const wn   = parseInt(document.getElementById('log-week').value);
+  const s    = parseFloat(document.getElementById('log-shoot').value) || 0;
+  const bh   = parseFloat(document.getElementById('log-bh').value)    || 0;
+  const co   = parseFloat(document.getElementById('log-combo').value)  || 0;
+  if (!s && !bh && !co) { showToast('Enter at least one score'); return; }
+  const d = DRILLS[wn];
+  const pct = Math.round(((s/d.shoot.max)*100 + (Math.min(bh,200)/200)*100 + (co/d.combo.max)*100) / 3);
+  const key = `${name}__w${wn}`;
+  scores[key] = { name, week:wn, shoot:s, bh, combo:co, pct: isNaN(pct)?0:pct, ts: Date.now() };
+  save();
+  showToast('Score posted! Check the leaderboard 🏆');
+  document.getElementById('log-name').value = '';
+}
+
+// ── LEADERBOARD ───────────────────────────────────────
+function setBoardWeek(n) {
+  curBoardWeek = n;
+  buildWeekStrip('board-week-strip', n, 'setBoardWeek');
+  renderBoard();
+}
+
+function renderBoard() {
+  buildWeekStrip('board-week-strip', curBoardWeek, 'setBoardWeek');
+  const wn = curBoardWeek;
+  const ws = Object.values(scores).filter(s => s.week === wn);
+  const sorted = [...ws].sort((a,b) => b.shoot - a.shoot);
+  document.getElementById('board-title').textContent = `Week ${wn} Leaderboard · ${WEEKS[wn-1].dates}`;
+  document.getElementById('board-metrics').innerHTML = `
+    <div class="metric"><div class="metric-val">${ws.length}</div><div class="metric-label">Players posted</div></div>
+    <div class="metric"><div class="metric-val">${ws.length * 3}</div><div class="metric-label">Scores logged</div></div>
+    <div class="metric"><div class="metric-val">${sorted[0] ? sorted[0].shoot : '—'}</div><div class="metric-label">Top shoot score</div></div>`;
+  if (!sorted.length) {
+    document.getElementById('board-content').innerHTML = '<div class="empty-state">No scores yet — be the first to post!</div>';
+    return;
+  }
+  const maxShoot = Math.max(...sorted.map(s=>s.shoot), 1);
+  document.getElementById('board-content').innerHTML = `
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Player</th><th>Shooting</th><th>BH</th><th>Combo</th><th>Bar</th></tr></thead>
+      <tbody>${sorted.map((s,i) => {
+        const rc = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
+        const w = Math.round(s.shoot/maxShoot*100);
+        return `<tr>
+          <td><span class="rank-badge ${rc}">${i+1}</span></td>
+          <td style="font-weight:700">${s.name}</td>
+          <td>${s.shoot}</td>
+          <td style="color:var(--light)">${s.bh}</td>
+          <td style="color:var(--light)">${s.combo}</td>
+          <td style="min-width:60px"><div class="prog-bar"><div class="prog-fill" style="width:${w}%"></div></div></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+// ── EXPLORER ──────────────────────────────────────────
+function selectPref(varName, opt, btnEl, groupId) {
+  prefs[varName] = opt;
+  save();
+  document.querySelectorAll(`#${groupId} .pref-btn`).forEach(b => {
+    b.style.background = 'var(--white)';
+    b.style.color = 'var(--dark)';
+    b.style.borderColor = 'var(--border)';
+    b.style.fontWeight = '500';
+  });
+  btnEl.style.background = 'var(--purple)';
+  btnEl.style.color = 'white';
+  btnEl.style.borderColor = 'var(--purple)';
+  btnEl.style.fontWeight = '700';
+  updateConfirmationSummary();
+}
+
+function updateConfirmationSummary() {
+  const el = document.getElementById('confirmation-summary');
+  const all = DL_PHASES.flatMap(p => p.vars);
+  const set = all.filter(v => prefs[v.name]);
+  if (!set.length) {
+    el.textContent = 'Complete the phases above to see your full preferred form here.';
+    return;
+  }
+  el.innerHTML = set.map(v =>
+    `<span style="margin-right:12px"><strong style="color:var(--purple)">${v.name}:</strong> ${prefs[v.name]}</span>`
+  ).join('');
+}
+
+function renderExplorer() {
+  // Schedule
+  const schedEl = document.getElementById('explorer-schedule');
+  const schedData = [
+    ['Week 1 (June 15–21)',    'var(--orange)', 'Takeoff foot · Landing foot'],
+    ['Week 2 (June 22–28)',    'var(--orange)', 'Hop direction · Pivot / turn'],
+    ['Week 3 (June 29–Jul 5)','var(--orange)', 'Foot width · Hip & knee load · Balance weight'],
+    ['Week 4 (July 6–12)',     'var(--red)',    'Arc · Ball set point'],
+    ['Week 5 (July 13–19)',    'var(--red)',    'Guide hand'],
+    ['Week 6 (July 20–26)',    'var(--violet)', 'Shot rhythm'],
+    ['Week 7 (July 27–Aug 2)','var(--violet)', 'Follow-through · Eye target'],
+    ['Week 8 (Aug 3–9)',       'var(--green)',  'Full form under fatigue'],
+    ['Week 9 (Aug 10–16)',     'var(--blue)',   'Game-speed benchmark'],
+  ];
+  schedEl.innerHTML = schedData.map(([wk,col,vars],i) =>
+    `<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px;${i===WEEKS.length-1?'border-bottom:none':''}">
+      <span style="font-weight:700;color:${col};min-width:130px">${wk}</span>
+      <span style="color:var(--mid)">${vars}</span>
+    </div>`
+  ).join('');
+
+  // Phases
+  const phasesEl = document.getElementById('explorer-phases');
+  phasesEl.innerHTML = DL_PHASES.map(phase => {
+    const pc = PHASE_COLORS[phase.key];
+    const varsHtml = phase.vars.map(v => {
+      const gid = 'grp-' + v.name.replace(/[^a-z]/gi,'');
+      const btns = v.opts.map(opt => {
+        const sel = prefs[v.name] === opt;
+        const style = sel
+          ? 'background:var(--purple);color:white;border-color:var(--purple);font-weight:700'
+          : 'background:var(--white);color:var(--dark);border-color:var(--border);font-weight:500';
+        return `<button class="pref-btn" id="${gid}" style="${style};padding:5px 10px;border-radius:6px;border:1.5px solid;cursor:pointer;font-size:11px;font-family:inherit;transition:all .15s"
+          onclick="selectPref('${v.name}','${opt}',this,'${gid}')">${opt}</button>`;
+      }).join('');
+      const prefLine = prefs[v.name]
+        ? `<div style="font-size:11px;color:var(--purple);margin-top:4px;font-weight:700">✓ My preferred ${v.name.toLowerCase()}: ${prefs[v.name]}</div>`
+        : `<div style="font-size:11px;color:var(--light);margin-top:4px">My preferred ${v.name.toLowerCase()}: not yet selected</div>`;
+      return `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:${pc.color};margin-bottom:6px">${v.name} <span style="font-size:10px;font-weight:500;color:var(--light)">(Week ${v.week})</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${btns}</div>
+        ${prefLine}
+      </div>`;
+    }).join('');
+    return `<div class="card" style="border-left:4px solid ${pc.border}">
+      <div style="font-size:13px;font-weight:700;color:${pc.color};margin-bottom:2px">${phase.title}</div>
+      ${varsHtml}
+    </div>`;
+  }).join('');
+
+  updateConfirmationSummary();
+}
+
+function saveExplorer() {
+  const name  = document.getElementById('explorer-name').value.trim();
+  const score = parseInt(document.getElementById('explorer-score').value);
+  if (!name) { showToast('Enter your name'); return; }
+  const set = DL_PHASES.flatMap(p=>p.vars).filter(v=>prefs[v.name]);
+  if (set.length < 5) { showToast('Complete more exploration phases first'); return; }
+  scores[`EXPLORER__${name}`] = { name, type:'explorer', prefs:{...prefs}, score, ts:Date.now() };
+  save();
+  showToast('Form saved! ✅');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──────────────────────────────────────────────
+updateCountdown();
+setInterval(updateCountdown, 60000);
+renderSchedule();
+buildWeekStrip('workout-week-strip', CUR_WEEK, 'setWorkoutWeek');
+setWorkoutWeek(CUR_WEEK);
+buildWeekStrip('board-week-strip', CUR_WEEK, 'setBoardWeek');
+renderBoard();
+
+// Populate log week select on load
+document.addEventListener('DOMContentLoaded', () => {
+  renderLogInputs();
+});
+setTimeout(renderLogInputs, 100);
+</script>
+</body>
+</html>
