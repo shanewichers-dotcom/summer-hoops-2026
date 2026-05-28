@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer Hoops 2026 — Nooksack Valley Pioneers</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-teams-js/2.19.0/MicrosoftTeams.min.js"></script>
+<style>
+  :root {
+    --purple:#5B2C8C; --purple-lt:#EDE4F5; --purple-mid:#8B5CC0;
+    --orange:#BA7517; --orange-lt:#FAEEDA;
+    --blue:#185FA5;   --blue-lt:#E6F1FB;
+    --red:#993C1D;    --red-lt:#FAECE7;
+    --violet:#534AB7; --violet-lt:#EEEDFE;
+    --green:#3B6D11;  --green-lt:#EAF3DE;
+    --gold:#F5A623;   --silver:#A0A0A0; --bronze:#CD7F32;
+    --dark:#1A1A1A; --mid:#555; --light:#888;
+    --border:#E0E0E0; --bg:#F7F4FB; --white:#fff; --card:#fff;
+    --radius:10px; --shadow:0 2px 12px rgba(91,44,140,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;font-size:14px;}
+
+  .app-header{background:var(--purple);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+  .header-left{display:flex;align-items:center;gap:10px;}
+  .header-logo{width:36px;height:22px;background:white;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:var(--purple);letter-spacing:-1px;}
+  .header-title{font-size:15px;font-weight:700;}
+  .header-sub{font-size:11px;opacity:.75;margin-top:1px;}
+  .header-week{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;}
+
+  .tabs{display:flex;background:var(--white);border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{padding:11px 14px;font-size:12px;font-weight:500;color:var(--light);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;border:none;background:none;font-family:inherit;transition:all .2s;}
+  .tab.active{color:var(--purple);border-bottom:3px solid var(--purple);font-weight:700;}
+
+  .content{padding:14px;max-width:800px;margin:0 auto;}
+  .section{display:none;} .section.active{display:block;}
+
+  .week-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;}
+  .week-strip::-webkit-scrollbar{display:none;}
+  .wk-btn{flex-shrink:0;padding:5px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:11px;font-weight:600;color:var(--light);font-family:inherit;transition:all .2s;text-align:center;min-width:68px;}
+  .wk-btn.active{background:var(--purple);border-color:var(--purple);color:white;}
+  .wk-btn.current{border-color:var(--purple);color:var(--purple);}
+  .wk-date{font-size:9px;font-weight:400;opacity:.8;display:block;margin-top:1px;}
+
+  .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:13px 15px;margin-bottom:11px;box-shadow:var(--shadow);}
+  .card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;}
+  .card-title{font-size:14px;font-weight:700;flex:1;line-height:1.3;}
+  .pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+  .pill-shoot{background:var(--blue-lt);color:var(--blue);}
+  .pill-bh{background:var(--green-lt);color:var(--green);}
+  .pill-combo{background:var(--violet-lt);color:var(--violet);}
+  .pill-lower{background:var(--orange-lt);color:var(--orange);}
+  .pill-upper{background:var(--red-lt);color:var(--red);}
+  .pill-rhythm{background:var(--violet-lt);color:var(--violet);}
+  .pill-consol{background:var(--green-lt);color:var(--green);}
+  .pill-perf{background:var(--blue-lt);color:var(--blue);}
+
+  .drill-desc{font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:8px;}
+  .score-box{background:#F8F4FB;border-radius:6px;padding:8px 10px;font-size:12px;color:var(--dark);margin-bottom:6px;border-left:3px solid var(--purple);}
+  .score-label{font-size:10px;font-weight:700;color:var(--light);margin-bottom:2px;}
+  .tip-box{background:var(--blue-lt);border-radius:6px;padding:8px 10px;font-size:11.5px;color:var(--blue);font-style:italic;line-height:1.5;}
+  .tip-label{font-weight:700;font-style:normal;}
+  .phase-note{border-radius:6px;padding:8px 10px;font-size:11.5px;margin:6px 0;line-height:1.5;}
+
+  .directions-box{background:var(--purple-lt);border:1.5px solid var(--purple);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;}
+  .directions-box h3{font-size:12px;font-weight:700;color:var(--purple);margin-bottom:7px;}
+  .dir-row{margin-bottom:5px;font-size:12px;line-height:1.5;}
+  .dir-label{font-weight:700;color:var(--purple);}
+
+  .shot-legend{border-radius:8px;padding:10px 12px;margin-bottom:10px;border-left:4px solid;}
+  .shot-legend-title{font-size:11px;font-weight:700;margin-bottom:3px;}
+  .shot-legend-rule{font-size:11.5px;font-weight:700;margin-bottom:3px;}
+  .shot-positions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+  .shot-pos{background:white;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;}
+
+  .form-group{margin-bottom:11px;}
+  .form-label{font-size:12px;font-weight:600;color:var(--mid);margin-bottom:4px;display:block;}
+  .form-input,.form-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--white);}
+  .form-input:focus,.form-select:focus{outline:none;border-color:var(--purple);}
+  .btn{padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:all .2s;}
+  .btn-primary{background:var(--purple);color:white;width:100%;padding:12px;}
+  .btn-primary:hover{background:#4A2070;}
+  .btn-secondary{background:var(--bg);color:var(--purple);border:1.5px solid var(--purple);padding:8px 16px;width:auto;}
+  .btn-danger{background:#D93025;color:white;padding:8px 16px;width:auto;}
+
+  /* TEAM CARDS */
+  .team-card{border-radius:var(--radius);padding:14px 15px;margin-bottom:10px;border:2px solid;}
+  .team-rank{font-size:28px;font-weight:900;min-width:36px;}
+  .team-name{font-size:16px;font-weight:800;}
+  .team-pts{font-size:22px;font-weight:900;text-align:right;}
+  .team-pts-label{font-size:10px;font-weight:600;opacity:.7;text-align:right;}
+  .team-members{font-size:11px;opacity:.7;margin-top:3px;}
+  .team-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+  .team-bd-item{background:rgba(255,255,255,.5);border-radius:6px;padding:5px 8px;text-align:center;}
+  .team-bd-val{font-size:14px;font-weight:800;}
+  .team-bd-label{font-size:9px;opacity:.7;}
+  .prog-bar{height:5px;background:rgba(255,255,255,.3);border-radius:3px;margin-top:8px;}
+  .prog-fill{height:5px;background:white;border-radius:3px;transition:width .5s;}
+
+  /* PLAYER ROWS */
+  .player-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+  .player-row:last-child{border-bottom:none;}
+  .player-name{flex:1;font-weight:600;}
+  .player-pts{font-weight:700;color:var(--purple);min-width:50px;text-align:right;}
+
+  /* LEADERBOARD */
+  .metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+  .metric{background:var(--card);border-radius:8px;padding:11px;text-align:center;border:1px solid var(--border);}
+  .metric-val{font-size:20px;font-weight:800;color:var(--purple);}
+  .metric-label{font-size:11px;color:var(--light);margin-top:2px;}
+
+  /* COUNTDOWN */
+  .countdown-bar{background:var(--purple);color:white;border-radius:var(--radius);padding:13px 15px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .cd-main{font-size:19px;font-weight:800;}
+  .cd-sub{font-size:11px;opacity:.8;margin-top:2px;}
+  .cd-pct{font-size:17px;font-weight:800;}
+  .summer-bar{height:6px;background:rgba(255,255,255,.25);border-radius:3px;width:100%;margin-top:7px;}
+  .summer-fill{height:6px;background:white;border-radius:3px;}
+
+  /* COACH ADMIN */
+  .admin-section{margin-bottom:18px;}
+  .admin-section h3{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--purple-lt);}
+  .pin-screen{text-align:center;padding:30px 20px;}
+  .pin-input{width:140px;text-align:center;font-size:28px;font-weight:800;letter-spacing:8px;padding:12px;border:2px solid var(--border);border-radius:10px;font-family:inherit;}
+  .pin-input:focus{outline:none;border-color:var(--purple);}
+  .player-tag{display:inline-flex;align-items:center;gap:4px;background:var(--purple-lt);color:var(--purple);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin:2px;}
+  .player-tag .remove{cursor:pointer;font-weight:900;opacity:.6;}
+  .player-tag .remove:hover{opacity:1;}
+  .attendance-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;}
+  .att-item{background:var(--bg);border-radius:8px;padding:10px;text-align:center;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;}
+  .att-item.selected{background:var(--purple);border-color:var(--purple);color:white;}
+  .att-item-label{font-size:11px;font-weight:700;}
+  .att-item-pts{font-size:18px;font-weight:900;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--purple);color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:999;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .empty-state{text-align:center;padding:36px 20px;color:var(--light);font-size:13px;}
+  .section-head{font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;margin-top:3px;}
+  .current-badge{background:var(--purple);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;}
+  .integrity-note{background:#FFF8E7;border-left:3px solid var(--orange);border-radius:0 6px 6px 0;padding:8px 10px;font-size:11.5px;color:#633806;margin-top:8px;line-height:1.5;}
+
+  /* TABS for leaderboard */
+  .sub-tabs{display:flex;gap:6px;margin-bottom:12px;}
+  .sub-tab{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:12px;font-weight:600;color:var(--light);font-family:inherit;transition:all .2s;}
+  .sub-tab.active{background:var(--purple);border-color:var(--purple);color:white;}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  @media(max-width:480px){.two-col{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-left">
+    <div class="header-logo">NV</div>
+    <div>
+      <div class="header-title">Summer Hoops 2026</div>
+      <div class="header-sub">Nooksack Valley Pioneers · June 15 – Aug 16</div>
+    </div>
+  </div>
+  <div class="header-week" id="header-week">Loading...</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('home')">🏠 Home</button>
+  <button class="tab" onclick="switchTab('workouts')">📋 Workouts</button>
+  <button class="tab" onclick="switchTab('log')">✏️ Log Score</button>
+  <button class="tab" onclick="switchTab('board')">🏆 Leaderboard</button>
+  <button class="tab" onclick="switchTab('explorer')">🔬 Explorer</button>
+  <button class="tab" onclick="switchTab('coach')">🔒 Coach</button>
+</div>
+
+<!-- HOME -->
+<div id="tab-home" class="section active">
+  <div class="content">
+    <div class="countdown-bar">
+      <div><div class="cd-main" id="cd-main">—</div><div class="cd-sub" id="cd-sub">Loading...</div></div>
+      <div style="text-align:right"><div style="font-size:10px;opacity:.7">Summer progress</div><div class="cd-pct" id="cd-pct">—</div></div>
+      <div class="summer-bar" style="flex-basis:100%"><div class="summer-fill" id="summer-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="my-team-card"></div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">How This Works</div>
+      <div class="dir-row"><span class="dir-label">1.</span> Complete this week's Shooting, Ball Handling, and Combo drills.</div>
+      <div class="dir-row"><span class="dir-label">2.</span> Practice all week with position A, B, or C. Submit scores from Position A (behind 3PT line) only.</div>
+      <div class="dir-row"><span class="dir-label">3.</span> Log your best scores by Sunday in the Log Score tab.</div>
+      <div class="dir-row"><span class="dir-label">4.</span> Your points roll up to your team total every Sunday.</div>
+      <div class="dir-row"><span class="dir-label">5.</span> Coach logs practice, lifting, and game attendance points.</div>
+      <div class="integrity-note">🤝 <strong>Be honest.</strong> Do not make up scores. Your coaches trust you and your teammates are counting on accurate results. <strong>Integrity matters.</strong></div>
+    </div>
+
+    <div class="section-head">Point Values</div>
+    <div class="two-col" style="margin-bottom:12px">
+      <div class="card" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:8px">Workout Points</div>
+        <div class="dir-row">🏀 Shooting score × 2</div>
+        <div class="dir-row">⛹ BH dribble total ÷ 10</div>
+        <div class="dir-row">🎯 Combo score × 2</div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:8px">Attendance Points</div>
+        <div class="dir-row">🏃 Practice = 5 pts</div>
+        <div class="dir-row">💪 Lifting = 5 pts</div>
+        <div class="dir-row">🏟️ Summer league = 5 pts</div>
+      </div>
+    </div>
+
+    <div class="section-head">9-Week Schedule</div>
+    <div id="schedule-cards"></div>
+  </div>
+</div>
+
+<!-- WORKOUTS -->
+<div id="tab-workouts" class="section">
+  <div class="content">
+    <div class="week-strip" id="workout-week-strip"></div>
+    <div id="workout-content"></div>
+  </div>
+</div>
+
+<!-- LOG SCORE -->
+<div id="tab-log" class="section">
+  <div class="content">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">📝 Log Your Best Scores</div>
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input id="log-name" class="form-input" placeholder="First Last">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Week</label>
+        <select id="log-week" class="form-select"></select>
+      </div>
+      <div id="log-drill-inputs"></div>
+      <div class="integrity-note" style="margin-bottom:12px">Submit your best score from that week. Shooting must be from Position A (behind the 3PT line).</div>
+      <button class="btn btn-primary" onclick="submitScore()">Submit Score ↗</button>
+    </div>
+
+    <div class="card" id="my-points-preview" style="display:none">
+      <div class="card-title" style="margin-bottom:8px">Your Points This Submission</div>
+      <div id="points-breakdown"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="tab-board" class="section">
+  <div class="content">
+    <div class="week-strip" id="board-week-strip"></div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchBoardView('teams')">🏅 Teams</button>
+      <button class="sub-tab" onclick="switchBoardView('players')">👤 Players</button>
+    </div>
+    <div id="board-teams"></div>
+    <div id="board-players" style="display:none"></div>
+  </div>
+</div>
+
+<!-- EXPLORER -->
+<div id="tab-explorer" class="section">
+  <div class="content">
+    <div class="card" style="border:2px solid var(--purple)">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px">⚠️ What is this page?</div>
+      <div style="font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:10px">
+        This is a <strong>reference and recording sheet</strong> — NOT a standalone workout. Each variable is introduced in a specific week. After completing that week's shooting drill, come back here and record your preferred option.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:6px">Variable Schedule:</div>
+      <div id="explorer-schedule"></div>
+    </div>
+    <div id="explorer-phases"></div>
+    <div class="card" style="border:2px solid var(--purple);margin-top:4px">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:8px">My Complete Preferred Form — Confirmation Test</div>
+      <div style="font-size:12px;color:var(--mid);margin-bottom:10px;line-height:1.5">After completing all 3 phases, shoot 20 shots from behind the 3PT line using your full preferred combination. Complete this after Week 9 — on or after August 17.</div>
+      <div id="confirmation-summary" style="font-size:12px;color:var(--mid);margin-bottom:10px;line-height:1.8"></div>
+      <div class="form-group"><label class="form-label">Your Name</label><input id="explorer-name" class="form-input" placeholder="First Last"></div>
+      <div class="form-group"><label class="form-label">Makes out of 20 (from behind the 3PT line)</label><input id="explorer-score" type="number" min="0" max="20" class="form-input" placeholder="e.g. 14"></div>
+      <button class="btn btn-primary" onclick="saveExplorer()">Save My Form ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- COACH ADMIN -->
+<div id="tab-coach" class="section">
+  <div class="content" id="coach-content">
+    <div class="pin-screen" id="pin-screen">
+      <div style="font-size:18px;font-weight:700;color:var(--purple);margin-bottom:6px">🔒 Coach Admin</div>
+      <div style="font-size:12px;color:var(--mid);margin-bottom:20px">Enter your 4-digit PIN to access the coach panel.</div>
+      <input type="password" inputmode="numeric" maxlength="4" class="pin-input" id="pin-input" placeholder="••••" oninput="checkPin(this.value)">
+      <div style="font-size:11px;color:var(--red);margin-top:10px;display:none" id="pin-error">Incorrect PIN. Try again.</div>
+    </div>
+    <div id="admin-panel" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:16px;font-weight:800;color:var(--purple)">Coach Admin Panel</div>
+        <button class="btn btn-secondary" onclick="lockAdmin()" style="padding:6px 12px;font-size:12px">Lock 🔒</button>
+      </div>
+
+      <!-- TEAM SETUP -->
+      <div class="admin-section">
+        <h3>Team Setup</h3>
+        <div class="form-group">
+          <label class="form-label">Team Name</label>
+          <input id="new-team-name" class="form-input" placeholder="e.g. Lightning">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Add Players (one per line)</label>
+          <textarea id="new-team-players" class="form-input" rows="4" placeholder="John Smith&#10;Mike Jones&#10;Alex Brown"></textarea>
+        </div>
+        <button class="btn btn-secondary" onclick="addTeam()">Add Team</button>
+        <div id="teams-list" style="margin-top:14px"></div>
+      </div>
+
+      <!-- ATTENDANCE -->
+      <div class="admin-section">
+        <h3>Log Attendance Points</h3>
+        <div class="form-group">
+          <label class="form-label">Week</label>
+          <select id="att-week" class="form-select"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Player</label>
+          <select id="att-player" class="form-select"><option value="">— select player —</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Activity (tap to toggle — each = 5 pts)</label>
+          <div class="attendance-grid">
+            <div class="att-item" id="att-practice" onclick="toggleAtt('practice')">
+              <div class="att-item-pts">5</div>
+              <div class="att-item-label">Practice</div>
+            </div>
+            <div class="att-item" id="att-lifting" onclick="toggleAtt('lifting')">
+              <div class="att-item-pts">5</div>
+              <div class="att-item-label">Lifting</div>
+            </div>
+            <div class="att-item" id="att-game" onclick="toggleAtt('game')">
+              <div class="att-item-pts">5</div>
+              <div class="att-item-label">Game</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="logAttendance()">Add Attendance Points</button>
+      </div>
+
+      <!-- ATTENDANCE LOG -->
+      <div class="admin-section">
+        <h3>Attendance Log</h3>
+        <div id="attendance-log"></div>
+      </div>
+
+      <!-- RESET -->
+      <div class="admin-section">
+        <h3>Danger Zone</h3>
+        <button class="btn btn-danger" onclick="resetAll()">Reset All Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+if(typeof microsoftTeams!=='undefined') microsoftTeams.initialize();
+
+// ── CONFIG ────────────────────────────────────────────
+const COACH_PIN = '1234'; // CHANGE THIS to your preferred PIN
+
+// ── DATES ────────────────────────────────────────────
+const WEEKS = [
+  {n:1,dates:'June 15–21',   phase:'lower', label:'Lower body — Phase 1'},
+  {n:2,dates:'June 22–28',   phase:'lower', label:'Lower body — Phase 1'},
+  {n:3,dates:'June 29–Jul 5',phase:'lower', label:'Lower body — Phase 1'},
+  {n:4,dates:'July 6–12',    phase:'upper', label:'Upper body — Phase 2'},
+  {n:5,dates:'July 13–19',   phase:'upper', label:'Upper body — Phase 2'},
+  {n:6,dates:'July 20–26',   phase:'rhythm',label:'Rhythm & feel — Phase 3'},
+  {n:7,dates:'July 27–Aug 2',phase:'rhythm',label:'Rhythm & feel — Phase 3'},
+  {n:8,dates:'Aug 3–9',      phase:'consol',label:'Consolidation'},
+  {n:9,dates:'Aug 10–16',    phase:'perf',  label:'Performance'},
+];
+const START = new Date('2026-06-15');
+const END   = new Date('2026-08-16');
+
+function currentWeekNum(){
+  const now=new Date();
+  for(let i=0;i<WEEKS.length;i++){
+    const s=new Date(START); s.setDate(START.getDate()+i*7);
+    const e=new Date(s); e.setDate(s.getDate()+6);
+    if(now>=s&&now<=e) return i+1;
+  }
+  return now>END?9:1;
+}
+const CUR_WEEK=currentWeekNum();
+
+// ── STATE ─────────────────────────────────────────────
+let scores={}, teams={}, attendance={}, prefs={}, adminUnlocked=false;
+let curWorkoutWeek=CUR_WEEK, curBoardWeek=CUR_WEEK, boardView='teams';
+let attSelected={practice:false,lifting:false,game:false};
+
+function load(){
+  try{scores    =JSON.parse(localStorage.getItem('sh26_scores')||'{}');}catch(e){}
+  try{teams     =JSON.parse(localStorage.getItem('sh26_teams') ||'{}');}catch(e){}
+  try{attendance=JSON.parse(localStorage.getItem('sh26_att')   ||'{}');}catch(e){}
+  try{prefs     =JSON.parse(localStorage.getItem('sh26_prefs') ||'{}');}catch(e){}
+}
+function save(){
+  try{
+    localStorage.setItem('sh26_scores',JSON.stringify(scores));
+    localStorage.setItem('sh26_teams', JSON.stringify(teams));
+    localStorage.setItem('sh26_att',   JSON.stringify(attendance));
+    localStorage.setItem('sh26_prefs', JSON.stringify(prefs));
+  }catch(e){}
+}
+load();
+
+// ── POINTS CALCULATION ────────────────────────────────
+function calcPlayerPts(name, weekNum){
+  const key=`${name}__w${weekNum}`;
+  const s=scores[key]||{};
+  const shootPts = Math.round((s.shoot||0)*2);
+  const bhPts    = Math.round((s.bh||0)/10);
+  const comboPts = Math.round((s.combo||0)*2);
+  const attKey=`${name}__w${weekNum}`;
+  const att=attendance[attKey]||{};
+  const practicePts=(att.practice||0)*5;
+  const liftingPts =(att.lifting||0)*5;
+  const gamePts    =(att.game||0)*5;
+  return {
+    shoot:shootPts, bh:bhPts, combo:comboPts,
+    practice:practicePts, lifting:liftingPts, game:gamePts,
+    total:shootPts+bhPts+comboPts+practicePts+liftingPts+gamePts
+  };
+}
+
+function calcTeamPts(teamName, weekNum){
+  const team=teams[teamName];
+  if(!team) return {total:0,players:[]};
+  let total=0;
+  const players=team.players.map(p=>{
+    const pts=calcPlayerPts(p,weekNum);
+    total+=pts.total;
+    return{name:p,...pts};
+  });
+  return{total,players};
+}
+
+function calcTeamSeason(teamName){
+  let total=0;
+  for(let w=1;w<=9;w++) total+=calcTeamPts(teamName,w).total;
+  return total;
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${t}')"]`).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='board')   renderBoard();
+  if(t==='log')     renderLogInputs();
+  if(t==='explorer')renderExplorer();
+  if(t==='coach')   renderCoach();
+}
+
+function switchBoardView(v){
+  boardView=v;
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`[onclick="switchBoardView('${v}')"]`).classList.add('active');
+  document.getElementById('board-teams').style.display  = v==='teams'  ?'block':'none';
+  document.getElementById('board-players').style.display= v==='players'?'block':'none';
+  renderBoard();
+}
+
+// ── COUNTDOWN ─────────────────────────────────────────
+function updateCountdown(){
+  const now=new Date();
+  const pct=Math.min(100,Math.round(Math.max(0,now-START)/(END-START)*100));
+  const main=document.getElementById('cd-main');
+  const sub =document.getElementById('cd-sub');
+  const fill=document.getElementById('summer-fill');
+  const cdp =document.getElementById('cd-pct');
+  const hw  =document.getElementById('header-week');
+  if(now<START){
+    const d=Math.ceil((START-now)/86400000);
+    main.textContent=`${d} day${d!==1?'s':''} to go`;
+    sub.textContent='Program starts June 15, 2026';
+    hw.textContent='Starts June 15';
+  }else if(now>END){
+    main.textContent='Program complete! 🏆';
+    sub.textContent='Season starts soon — trust your form';
+    hw.textContent='Summer complete';
+  }else{
+    const d=Math.ceil((END-now)/86400000);
+    main.textContent=`Week ${CUR_WEEK} of 9`;
+    sub.textContent=`${d} day${d!==1?'s':''} remaining · ${WEEKS[CUR_WEEK-1].label}`;
+    hw.textContent=`Week ${CUR_WEEK} · ${WEEKS[CUR_WEEK-1].dates}`;
+  }
+  if(fill) fill.style.width=pct+'%';
+  if(cdp)  cdp.textContent=pct+'%';
+}
+
+// ── MY TEAM CARD (Home) ───────────────────────────────
+function renderMyTeamCard(){
+  const el=document.getElementById('my-team-card');
+  // Find all teams and their week pts for banner display
+  const teamNames=Object.keys(teams);
+  if(!teamNames.length){el.innerHTML='';return;}
+  const ranked=teamNames.map(n=>({
+    name:n,
+    weekPts:calcTeamPts(n,CUR_WEEK).total,
+    seasonPts:calcTeamSeason(n),
+    color:teams[n].color||'var(--purple)',
+    players:teams[n].players||[]
+  })).sort((a,b)=>b.weekPts-a.weekPts);
+  const maxWk=Math.max(...ranked.map(t=>t.weekPts),1);
+  const colors=['#5B2C8C','#185FA5','#3B6D11','#993C1D','#534AB7','#BA7517'];
+  el.innerHTML=`
+    <div class="section-head">Team Standings — Week ${CUR_WEEK}</div>
+    ${ranked.map((t,i)=>{
+      const col=colors[i%colors.length];
+      const w=Math.round(t.weekPts/maxWk*100);
+      return`<div class="team-card" style="background:${col};color:white;border-color:${col}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="team-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+              <div>
+                <div class="team-name">${t.name}</div>
+                <div class="team-members">${t.players.join(' · ')}</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="team-pts">${t.weekPts}</div>
+            <div class="team-pts-label">THIS WEEK</div>
+            <div style="font-size:11px;opacity:.7;text-align:right;margin-top:2px">${t.seasonPts} season</div>
+          </div>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${w}%"></div></div>
+      </div>`;
+    }).join('')}`;
+}
+
+// ── SCHEDULE (Home) ───────────────────────────────────
+function renderSchedule(){
+  const el=document.getElementById('schedule-cards');
+  const rows=[
+    [1,'June 15–21','lower','Takeoff foot · Landing foot — 30 shots'],
+    [2,'June 22–28','lower','Hop direction · Pivot/turn — 30 shots'],
+    [3,'June 29–Jul 5','lower','Foot width · Knee load · Balance — 45 shots'],
+    [4,'July 6–12','upper','Arc · Ball set point — 30 shots'],
+    [5,'July 13–19','upper','Guide hand — 15 shots'],
+    [6,'July 20–26','rhythm','Shot rhythm — 15 shots'],
+    [7,'July 27–Aug 2','rhythm','Follow-through · Eye target — 30 shots'],
+    [8,'Aug 3–9','consol','Full form under fatigue — 15 shots'],
+    [9,'Aug 10–16','perf','Game-speed benchmark — 15 shots'],
+  ];
+  const pc={lower:'var(--orange)',upper:'var(--red)',rhythm:'var(--violet)',consol:'var(--green)',perf:'var(--blue)'};
+  el.innerHTML=rows.map(([wn,dates,ph,focus])=>`
+    <div class="card" style="border-left:4px solid ${pc[ph]};${wn===CUR_WEEK?'border:2px solid var(--purple)':''}padding:10px 13px;margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+        <div>
+          <span style="font-weight:700;font-size:13px">Week ${wn}</span>
+          ${wn===CUR_WEEK?'<span class="current-badge">NOW</span>':''}
+          <span style="font-size:11px;color:var(--light);margin-left:5px">${dates}</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--mid);margin-top:3px">${focus}</div>
+    </div>`).join('');
+}
+
+// ── WORKOUTS ──────────────────────────────────────────
+const DRILLS={
+  1:{shoot:{name:'Lower Body Explorer — Takeoff & Landing Foot',desc:'Right wing only. 3 reps off left foot · 3 right foot · 3 jump stop. Then 3 landing left-dominant · 3 right-dominant · 3 both feet. 18 exploration shots + 5 confirmation.',score:'Makes out of 5 confirmation shots',max:5,phase:'lower',tip:'This is the most foundational variable — hip alignment, balance, and weight transfer all trace back to your takeoff foot.'},
+  bh:{name:'Two-Ball Stationary — Dribble Count',desc:'Set 1 (30s): Both balls same-time — count RIGHT hand touches × 2. Set 2 (30s): Alternating — count RIGHT hand × 2. Set 3 (30s): One high / one low — count HIGH touches only.',score:'Set 1 R×2=___  Set 2 R×2=___  Set 3 high=___  TOTAL',max:999,tip:'Eyes up — never look at the ball. Challenge: try with eyes closed. If count drops, your hands rely on vision.'},
+  combo:{name:'Chair Color-Call — PAC Finish Drill',desc:'Chair in Zone 1 (1 step inside 3PT), Zone 2 (halfway to key), or Zone 3 (key). Partner/randomizer calls RED (right) · BLUE (left) · ORANGE (pull-up) as you cross half-court. Move chair every 3 reps. 12 reps. Vary finish every time.',score:'Makes  ___ / 12',max:12,tip:'Two layers of PAC: chair zone changes the spatial problem, color is called mid-approach so no pre-planning is possible.'}},
+  2:{shoot:{name:'Lower Body Explorer — Hop Direction & Pivot/Turn',desc:'Block 1: 3 hop left · 3 right · 3 back · 3 forward. Block 2: 3 quarter-turn right · 3 left · 3 already square. 21 exploration shots + 5 confirmation.',score:'Makes out of 5 confirmation shots',max:5,phase:'lower',tip:'Hop direction is the most game-realistic variable — a defender gives you the direction. Discover which your body handles best.'},
+  bh:{name:'Wall Touch Dribble Challenge',desc:"Arm's length from wall. R1 (30s) Crossover — touch wall on release. R2 (30s) Through legs LEFT foot forward. R3 (30s) Through legs RIGHT foot forward. R4 (30s) Behind back. Count wall touches each round. Rest 15s between.",score:'R1=___  R2=___  R3=___  R4=___  TOTAL WALL TOUCHES',max:999,tip:'You cannot fake the transfer and still reach the wall. The wall IS the defender. Try eyes closed for added challenge.'},
+  combo:{name:'3-Object Read & Shoot',desc:'Objects: 1=left wing, 2=top of key, 3=right wing (on/behind 3PT). Roll ball from half-court, sprint after it. Partner calls 1, 2, or 3 WHILE you sprint — before you pick up the ball. Shoot 3PT from that object. 12 reps.',score:'Makes  ___ / 12',max:12,tip:'Number called mid-sprint forces a direction change while your body is already moving — exactly like reading a transition play.'}},
+  3:{shoot:{name:'Lower Body Explorer — Stance, Knee Load & Balance',desc:'Block 1: 3 narrow · 3 normal · 3 wide stance. Block 2: 3 minimal bend · 3 medium dip · 3 deep load. Block 3: 3 forward · 3 centered · 3 back weight. 27 exploration shots + 5 confirmation.',score:'Makes out of 5 confirmation shots',max:5,phase:'lower',tip:'Foot width and knee load interact strongly. Wide + deep = stable. Narrow + minimal = quick. Try all combinations.'},
+  bh:{name:'Speed Dribble + Random Stop — Jump Stop Count',desc:'Baseline to baseline full speed, strong hand. Random interval timer or partner shouts STOP. Every stop = jump stop with BOTH feet landing simultaneously. 6 full-court lengths. Count only stops where both feet land at same time.',score:'Jump stops with both feet together  ___ / ___',max:12,tip:'One foot first = a travel. Both feet simultaneously = a real jump stop. React at full speed — no slowing down before the stop.'},
+  combo:{name:'Variable Finish + Spin Ball 3PT — 3 Rounds',desc:'Each round choose one rule (any way · backboard only · swish only). PART 1: 5 short shots within 1–4 feet. Mix hand, position, and starting direction (back to hoop, sideline, etc.) every shot. No dribbles. PART 2: Spin ball from near basket, sprint, catch, shoot 3PT. Adjust with dribbles if needed. 3 shots. Scoring: Part 1=1pt each, Part 2=2pts each. Max 11pts/round.',score:'R1:___/11  R2:___/11  R3:___/11  GRAND TOTAL:___/33',max:33,tip:'The spin ball creates a different catch angle every rep — just like a real pass in a game.'}},
+  4:{shoot:{name:'Upper Body Explorer — Arc & Ball Set Point',desc:'Block 1: 3 flat · 3 medium · 3 high arc. Block 2: 3 chin · 3 eye level · 3 belly button set point. 18 exploration shots + 5 confirmation.',score:'Makes out of 5 confirmation shots',max:5,phase:'upper',tip:'Eye level = shorter release path. Belly button = longest push path, needs more arc. Feel which loads most naturally.'},
+  bh:{name:'Crossover Cone Gauntlet — Dribble Count',desc:'5 objects, 3 feet apart, half-court length. Zigzag to outside of each. Run 1: Crossovers only. Run 2: Between legs only. Run 3: Behind back only. Run 4: Combo (any 2 moves). Run 5: Combo (all 3). Count every dribble each run. Add all 5 for total.',score:'R1:___  R2:___  R3:___  R4:___  R5:___  TOTAL:___',max:999,tip:'Fewer total dribbles = longer, more powerful pushes. Track your total each week — lower means more efficient handle.'},
+  combo:{name:'Triple Play Shooting Series',desc:'3 plays back to back = 1 round. 10 rounds. PLAY 1: Self-toss from under hoop (1 bounce), catch in post, move baseline or middle. PLAY 2: Toss 8–10 feet to spot on/inside 3PT, sprint to catch, pump fake then attack. PLAY 3: Toss 8–10 feet to different 3PT spot, sprint to catch, pump fake then 1–2 dribbles and pull-up.',score:'Total makes  ___ / 30',max:30,tip:'Running to the self-toss simulates coming off a screen — you are never standing still when you catch.'}},
+  5:{shoot:{name:'Upper Body Explorer — Guide Hand',desc:'3 spots (wings + top of key). At each: 3 front · 3 side · 3 behind. 27 exploration shots. Watch ball spin — wobble = guide hand interfering. Clean backspin = shooting hand in control. 5 confirmation shots.',score:'Makes out of 5 confirmation shots',max:5,phase:'upper',tip:'Guide hand behind the ball surprises many players — it removes interference and produces the cleanest release.'},
+  bh:{name:'Two-Ball Cone Slalom — Dribble Count',desc:'8 objects in straight line, 4 feet apart. Dribble both balls simultaneously, weave around outside of each. Runs 1 & 3: count RIGHT hand × 2. Runs 2 & 4: count LEFT hand × 2. 4 runs total.',score:'R1 R×2=___  R2 L×2=___  R3 R×2=___  R4 L×2=___  Best:___',max:999,tip:'If your left-hand count is significantly lower than your right, that is your weaker hand showing itself.'},
+  combo:{name:'Sprint-Read-Shoot',desc:'Start under basket. Odd reps: strong hand to half-court, switch to weak hand back. Even reps: weak hand to half-court, switch to strong. Touch DIFFERENT spot on half-court line each rep. At 3PT line — randomizer or partner calls RIGHT or LEFT. Attack and finish. Vary finish every rep. 12 reps.',score:'Makes  ___ / 12',max:12,tip:'Different half-court touch points mean every return is at a different angle — corner, wing, or straight down the middle.'}},
+  6:{shoot:{name:'Rhythm Explorer — Shot Rhythm',desc:'5 spots. At each: 2 fast (1 second) · 2 normal · 2 slow (3 seconds full motion). 30 exploration shots + 5 confirmation.',score:'Makes out of 5 confirmation shots',max:5,phase:'rhythm',tip:'Fast = quickest trigger. Slow = maximum control. Which do you naturally default to when tired?'},
+  bh:{name:'Combo Attack Sequence — Rep Count',desc:'RIGHT START: Cross R→L · Through right leg L→R (right foot fwd) · Behind back R→L · Hesitation left · Step-back left. Next cycle LEFT START: Cross L→R · Through left leg R→L (left foot fwd) · Behind back L→R · Hesitation right · Step-back right. Alternate starting hand. 2 minutes. Count every full transfer.',score:'Total completed steps  ___  (Goal: 80+)',max:999,tip:'If your count drops when your weak hand starts the cycle, that is the hand to focus on.'},
+  combo:{name:'Box Drill + Finish',desc:'Place ball in new floor spot inside box before each round. SHUFFLE right (BL→BR) · SPRINT up (BR→TR) · SHUFFLE left (TR→TL) · BACK PEDAL down (TL→BL). Sprint to ball, pick up, attack, finish. Vary finish every rep. 8 rounds.',score:'Finishes made  ___ / 8  Types: ☐1-ft ☐2-ft ☐Reverse ☐Wrong-hand ☐Floater ☐Pull-up',max:8,tip:'Ball location changes every round so your finish decision is always a real read, not a scripted move.'}},
+  7:{shoot:{name:'Feel Explorer — Follow-Through & Eye Target',desc:'Block 1: 3 quick snap · 3 normal snap · 3 long snap (until ball hits ground). Block 2: 3 front rim · 3 back rim · 3 through the net. 18 exploration shots + 5 confirmation with all 13 variables.',score:'Makes out of 5 confirmation shots',max:5,phase:'rhythm',tip:'"Through the net" or "back rim" focus often raises arc naturally — the feel produces the outcome without thinking about arc.'},
+  bh:{name:'Weak Hand Dribble Count',desc:'Strong hand behind back. PART 1: Start under basket, dribble to half-court and back = 1 length. 4 lengths. Eyes up. Count every bounce. PART 2: 60s stationary weak-hand dribble. Count touches. PART 3: 60s figure-8 with weak hand only at SHIN HEIGHT or below. Count every bounce.',score:'Part 1:___  Part 2:___  Part 3:___  TOTAL:___',max:999,tip:'Eyes up on Part 1 — if you look at the ball you are not ready to use this hand in a game.'},
+  combo:{name:'3-Spot Challenge — Make 3 Before You Miss 5',desc:"Pick any spot behind 3PT. Goal: make 3 before missing 5 (don't need to be consecutive). Made 3 = COMPLETE, new spot. Missed 5 first = OVER, new spot. 8 minutes. Score = spots completed.",score:'Spots completed:___  Spots attempted:___  Time: 8 min',max:999,tip:'The 5-miss limit means you move on just like in a game. 4+ spots in 8 minutes is finding your range.'}},
+  8:{shoot:{name:'Full Form Under Fatigue — Streak Challenge',desc:'Sprint baseline-to-baseline twice. Shoot full preferred form (all 13 variables) from behind 3PT. Repeat 15 times. Count your longest consecutive made-shot streak.',score:'Longest made streak:___',max:15,phase:'consol',tip:'Fatigue exposes what is genuinely yours. Which variable breaks down first? That is your early-season focus.'},
+  bh:{name:'Full Combo Gauntlet — Dribble Count',desc:'PART 1 (30s): Two-ball alternating — count right touches. PART 2: 10 dribbling figure-8s EYES CLOSED (right hand through left leg, left hand through right leg = 1). Open eyes = redo. Count and time. PART 3: 5-object slalom, both balls, count right. PART 4: 10 crossover attacks from 3PT — mix type and direction every rep. Attack basket, vary finish. NO SHOOTING in Parts 1–3.',score:'P1 R:___  P2:___/10 in ___sec  P3 R:___  P4 makes:___/10',max:999,tip:'Part 2 eyes closed is the hardest. Faster time week over week means your touch genuinely improved.'},
+  combo:{name:'Mini Game Simulation',desc:'Large object 1 step inside 3PT — move before each possession. Start 1 step behind 3PT, vary spot each possession. Randomizer 0–9: 1–3 = 1 dribble pull-up (~15 feet). 4–6 = drive LEFT and finish. 7–9 = drive RIGHT and finish. 0 = 1 dribble toward basket then step-back. Read object as you attack. 8 possessions.',score:'Makes  ___ / 8',max:8,tip:'Object is always 1 step inside 3PT so it is in play on every possession, even on pull-ups.'}},
+  9:{shoot:{name:'Pre-Season Benchmark — Game-Speed Performance',desc:'Full intensity, 5 minutes. Off screens (cone), off hand-offs (roll ball), catch-and-shoot, pull-ups in transition. Apply your complete preferred form for all 13 variables.',score:'Total makes in 5 minutes:___',max:40,phase:'perf',tip:'This is not practice — it is performance. 9 weeks of self-organization. Trust your form completely.'},
+  bh:{name:'Full Handle Benchmark — Dribble Count',desc:'Repeat Week 1 two-ball series: Set 1 (30s same-time, R×2) · Set 2 (30s alternating, R×2) · Set 3 (30s high/low, high only). Then repeat Week 2 wall touch challenge: all 4 rounds × 30s, count wall touches.',score:'Two-ball total:___  Wall touch total:___  Combined:___  (Compare to Wk 1 & 2)',max:999,tip:'The gap between your Week 1 and Week 9 numbers is the measurable output of the summer.'},
+  combo:{name:'Decision-Making Pressure Game',desc:"Start under basket. Spin ball outside 3PT — different direction every rep. Sprint, catch, SQUARE UP before anything else. Partner near half-court points as you square: LEFT = shot fake then drive left. RIGHT = shot fake then drive right. UP = shoot from where you are. Shot fake is NOT optional on left/right. 20 possessions.",score:'Makes  ___ / 20',max:20,tip:'Squaring up forces proper footwork on every catch. The partner at half-court means you must look up and find the signal.'}},
+};
+
+const PC={lower:{bg:'var(--orange-lt)',color:'var(--orange)',border:'var(--orange)'},upper:{bg:'var(--red-lt)',color:'var(--red)',border:'var(--red)'},rhythm:{bg:'var(--violet-lt)',color:'var(--violet)',border:'var(--violet)'},consol:{bg:'var(--green-lt)',color:'var(--green)',border:'var(--green)'},perf:{bg:'var(--blue-lt)',color:'var(--blue)',border:'var(--blue)'}};
+
+function buildWeekStrip(id,sel,fn){
+  document.getElementById(id).innerHTML=WEEKS.map(w=>{
+    const isCur=w.n===CUR_WEEK,isSel=w.n===sel;
+    return`<button class="wk-btn ${isSel?'active':''} ${isCur&&!isSel?'current':''}" onclick="${fn}(${w.n})">Week ${w.n}<span class="wk-date">${w.dates}</span></button>`;
+  }).join('');
+}
+
+function setWorkoutWeek(n){
+  curWorkoutWeek=n;
+  buildWeekStrip('workout-week-strip',n,'setWorkoutWeek');
+  const w=WEEKS[n-1],d=DRILLS[n];
+  const pc2=PC[w.phase]||{};
+  const dirHtml=`<div class="directions-box"><h3>Week ${n} · ${w.dates} · ${w.label}</h3>
+    <div class="dir-row"><span class="dir-label">SHOOTING FOCUS:</span> Focus only on the variable(s) below. Rest of your form is up to you.</div>
+    <div class="dir-row"><span class="dir-label">PRACTICE ALL WEEK:</span> All activities as many times as you want.</div>
+    <div class="dir-row" style="font-weight:700;color:var(--purple)">SUBMIT BY SUNDAY: Shooting from Position A (behind 3PT) only.</div></div>`;
+  const slHtml=`<div class="shot-legend" style="background:${pc2.bg};border-color:${pc2.border}">
+    <div class="shot-legend-title" style="color:${pc2.color}">SHOT POSITIONS</div>
+    <div class="shot-legend-rule" style="color:${pc2.color}">PRACTICE: A, B, or C all week &nbsp;|&nbsp; SUBMIT: Position A only</div>
+    <div class="shot-positions">
+      <span class="shot-pos" style="color:${pc2.color}">A — Behind 3PT</span>
+      <span class="shot-pos" style="color:${pc2.color}">B — Heels on line</span>
+      <span class="shot-pos" style="color:${pc2.color}">C — 1 step inside</span>
+    </div></div>`;
+  const dc=drill=>`<div class="card"><div class="card-header"><div class="card-title">${drill.name}</div></div>
+    <div class="drill-desc">${drill.desc}</div>
+    <div class="score-box"><div class="score-label">SCORE</div>${drill.score}</div>
+    ${drill.phase?`<div class="phase-note" style="background:${PC[drill.phase].bg};border-left:3px solid ${PC[drill.phase].border}"><strong style="color:${PC[drill.phase].color}">DL NOTE:</strong> <span style="color:${PC[drill.phase].color};font-size:11.5px">Log your preferred option in the Explorer tab after this session.</span></div>`:''}
+    <div class="tip-box"><span class="tip-label">TIP: </span>${drill.tip}</div></div>`;
+  const finalNote=n===9?`<div class="card" style="border:2px solid var(--purple);background:var(--purple-lt)"><div style="font-size:14px;font-weight:700;color:var(--purple);margin-bottom:8px">🏀 Final Step — Confirmation Test</div><div style="font-size:12px;color:var(--mid);line-height:1.6;margin-bottom:8px">Go to the <strong>Explorer</strong> tab to complete your final confirmation test. Shoot 20 shots from behind the 3PT line using your full preferred form for all 13 variables.</div><div style="font-size:12px;font-weight:700;color:var(--purple)">Trust the form your body discovered.</div></div>`:'';
+  document.getElementById('workout-content').innerHTML=dirHtml+'<div class="section-head">SHOOTING</div>'+slHtml+dc(d.shoot)+'<div class="section-head">BALL HANDLING</div>'+dc(d.bh)+'<div class="section-head">COMBO</div>'+dc(d.combo)+finalNote;
+}
+
+// ── LOG SCORE ─────────────────────────────────────────
+function renderLogInputs(){
+  const wsel=document.getElementById('log-week');
+  if(!wsel.options.length) WEEKS.forEach(w=>{const o=document.createElement('option');o.value=w.n;o.textContent=`Week ${w.n} (${w.dates})`;if(w.n===CUR_WEEK)o.selected=true;wsel.appendChild(o);});
+  wsel.onchange=updateLogDrills;
+  updateLogDrills();
+}
+function updateLogDrills(){
+  const wn=parseInt(document.getElementById('log-week').value);
+  const d=DRILLS[wn];
+  document.getElementById('log-drill-inputs').innerHTML=[
+    ['shoot','Shooting score (makes — Position A only)',d.shoot.max],
+    ['bh','Ball Handling score (total dribbles / count)',999],
+    ['combo','Combo score',d.combo.max],
+  ].map(([k,lbl,mx])=>`<div class="form-group"><label class="form-label">${lbl}</label><input id="log-${k}" type="number" min="0" max="${mx}" class="form-input" placeholder="Your best score" oninput="previewPoints()"></div>`).join('');
+}
+function previewPoints(){
+  const s=parseFloat(document.getElementById('log-shoot')?.value)||0;
+  const b=parseFloat(document.getElementById('log-bh')?.value)||0;
+  const c=parseFloat(document.getElementById('log-combo')?.value)||0;
+  if(!s&&!b&&!c){document.getElementById('my-points-preview').style.display='none';return;}
+  const sp=Math.round(s*2),bp=Math.round(b/10),cp=Math.round(c*2),tot=sp+bp+cp;
+  document.getElementById('my-points-preview').style.display='block';
+  document.getElementById('points-breakdown').innerHTML=`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:13px">
+      <div>🏀 Shooting: <strong>${sp} pts</strong></div>
+      <div>⛹ Ball handling: <strong>${bp} pts</strong></div>
+      <div>🎯 Combo: <strong>${cp} pts</strong></div>
+      <div style="font-weight:800;color:var(--purple)">TOTAL: ${tot} pts</div>
+    </div>`;
+}
+function submitScore(){
+  const name=document.getElementById('log-name').value.trim();
+  if(!name){showToast('Enter your name first');return;}
+  const wn=parseInt(document.getElementById('log-week').value);
+  const s=parseFloat(document.getElementById('log-shoot').value)||0;
+  const b=parseFloat(document.getElementById('log-bh').value)||0;
+  const c=parseFloat(document.getElementById('log-combo').value)||0;
+  if(!s&&!b&&!c){showToast('Enter at least one score');return;}
+  scores[`${name}__w${wn}`]={name,week:wn,shoot:s,bh:b,combo:c,ts:Date.now()};
+  save();
+  previewPoints();
+  showToast('Score posted! Check the leaderboard 🏆');
+  document.getElementById('log-name').value='';
+}
+
+// ── LEADERBOARD ───────────────────────────────────────
+function setBoardWeek(n){curBoardWeek=n;buildWeekStrip('board-week-strip',n,'setBoardWeek');renderBoard();}
+function renderBoard(){
+  buildWeekStrip('board-week-strip',curBoardWeek,'setBoardWeek');
+  renderTeamBoard();
+  renderPlayerBoard();
+}
+function renderTeamBoard(){
+  const el=document.getElementById('board-teams');
+  const teamNames=Object.keys(teams);
+  if(!teamNames.length){el.innerHTML='<div class="empty-state">No teams set up yet. Coach will add teams before June 15.</div>';return;}
+  const wn=curBoardWeek;
+  const ranked=teamNames.map(n=>{
+    const wp=calcTeamPts(n,wn);
+    const sp=calcTeamSeason(n);
+    return{name:n,weekPts:wp.total,seasonPts:sp,players:wp.players,color:teams[n].color||'var(--purple)'};
+  }).sort((a,b)=>b.weekPts-a.weekPts);
+  const maxWk=Math.max(...ranked.map(t=>t.weekPts),1);
+  const colors=['#5B2C8C','#185FA5','#3B6D11','#993C1D','#534AB7','#BA7517'];
+  el.innerHTML=`
+    <div class="metric-row">
+      <div class="metric"><div class="metric-val">${teamNames.length}</div><div class="metric-label">Teams</div></div>
+      <div class="metric"><div class="metric-val">${ranked[0]?.weekPts||0}</div><div class="metric-label">Top week score</div></div>
+      <div class="metric"><div class="metric-val">${ranked[0]?.seasonPts||0}</div><div class="metric-label">Top season</div></div>
+    </div>
+    <div class="section-head">Week ${wn} · ${WEEKS[wn-1].dates}</div>
+    ${ranked.map((t,i)=>{
+      const col=colors[i%colors.length];
+      const w=Math.round(t.weekPts/maxWk*100);
+      const medals=['🥇','🥈','🥉'];
+      return`<div class="team-card" style="background:${col};color:white;border-color:${col}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="team-rank">${medals[i]||'#'+(i+1)}</div>
+            <div>
+              <div class="team-name">${t.name}</div>
+              <div class="team-members">${(teams[t.name]?.players||[]).join(' · ')}</div>
+            </div>
+          </div>
+          <div>
+            <div class="team-pts">${t.weekPts}</div>
+            <div class="team-pts-label">WEEK ${wn}</div>
+            <div style="font-size:12px;opacity:.8;text-align:right;margin-top:2px;font-weight:700">${t.seasonPts} season</div>
+          </div>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${w}%"></div></div>
+        <div style="margin-top:10px">
+          ${t.players.map(p=>`<div class="player-row" style="border-color:rgba(255,255,255,.2)">
+            <div class="player-name" style="color:white">${p.name}</div>
+            <div style="font-size:11px;opacity:.7;color:white">🏀${p.shoot} ⛹${p.bh} 🎯${p.combo} 🏃${p.practice+p.lifting+p.game}</div>
+            <div class="player-pts" style="color:white">${p.total}pts</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+function renderPlayerBoard(){
+  const el=document.getElementById('board-players');
+  const wn=curBoardWeek;
+  const allPlayers=[];
+  Object.keys(teams).forEach(tn=>{
+    (teams[tn].players||[]).forEach(p=>{
+      const pts=calcPlayerPts(p,wn);
+      allPlayers.push({name:p,team:tn,...pts});
+    });
+  });
+  // Also add any players who logged scores but aren't on a team
+  Object.values(scores).filter(s=>s.week===wn).forEach(s=>{
+    if(!allPlayers.find(p=>p.name===s.name)){
+      const pts=calcPlayerPts(s.name,wn);
+      allPlayers.push({name:s.name,team:'—',...pts});
+    }
+  });
+  allPlayers.sort((a,b)=>b.total-a.total);
+  if(!allPlayers.length){el.innerHTML='<div class="empty-state">No scores logged for this week yet.</div>';return;}
+  el.innerHTML=`<div class="card">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:6px 4px;color:var(--light);font-size:11px">#</th>
+        <th style="text-align:left;padding:6px 4px;color:var(--light);font-size:11px">Player</th>
+        <th style="text-align:left;padding:6px 4px;color:var(--light);font-size:11px">Team</th>
+        <th style="text-align:right;padding:6px 4px;color:var(--light);font-size:11px">Pts</th>
+      </tr></thead>
+      <tbody>${allPlayers.map((p,i)=>`<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 4px;font-weight:700;color:var(--purple)">${i+1}</td>
+        <td style="padding:8px 4px;font-weight:600">${p.name}</td>
+        <td style="padding:8px 4px;color:var(--light)">${p.team}</td>
+        <td style="padding:8px 4px;font-weight:800;color:var(--purple);text-align:right">${p.total}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+// ── EXPLORER ──────────────────────────────────────────
+const DL_PHASES=[
+  {title:'Lower body — Phase 1 (Weeks 1–3) · Starts June 15',key:'lower',vars:[
+    {name:'Takeoff foot',opts:['Off left foot','Off right foot','Jump stop (both)'],week:1},
+    {name:'Landing foot',opts:['Left foot leads','Right foot leads','Both feet land together'],week:1},
+    {name:'Hop direction',opts:['Hop left','Hop right','Hop back (step-back)'],week:2},
+    {name:'Pivot / turn',opts:['Quarter turn right','Quarter turn left','Already square'],week:2},
+    {name:'Foot width',opts:['Narrow (inside shoulders)','Normal (shoulder width)','Wide (outside shoulders)'],week:3},
+    {name:'Hip & knee load',opts:['Minimal bend','Medium dip','Deep load'],week:3},
+    {name:'Balance weight',opts:['Forward onto toes','Centered','Back onto heels'],week:3},
+  ]},
+  {title:'Upper body — Phase 2 (Weeks 4–5) · Starts July 6',key:'upper',vars:[
+    {name:'Arc',opts:['Flat arc','Medium arc','High arc (rainbow)'],week:4},
+    {name:'Ball set point',opts:['Eye level','Chin level','Belly button level'],week:4},
+    {name:'Guide hand',opts:['Front of ball','Side of ball','Behind ball'],week:5},
+  ]},
+  {title:'Rhythm & feel — Phase 3 (Weeks 6–7) · Starts July 20',key:'rhythm',vars:[
+    {name:'Shot rhythm',opts:['Fast — release in 1 second','Normal speed','Slow — full motion 3 seconds'],week:6},
+    {name:'Follow-through',opts:['Quick snap','Normal snap','Long snap (until ball hits ground)'],week:7},
+    {name:'Eye target',opts:['Front rim','Back rim','Through the net (soft focus)'],week:7},
+  ]},
+];
+function selectPref(vn,opt,btn,gid){
+  prefs[vn]=opt;save();
+  document.querySelectorAll('.pg-'+gid).forEach(b=>{b.style.background='var(--white)';b.style.color='var(--dark)';b.style.borderColor='var(--border)';b.style.fontWeight='500';});
+  btn.style.background='var(--purple)';btn.style.color='white';btn.style.borderColor='var(--purple)';btn.style.fontWeight='700';
+  updateConfirmSummary();
+}
+function updateConfirmSummary(){
+  const el=document.getElementById('confirmation-summary');
+  const all=DL_PHASES.flatMap(p=>p.vars);
+  const set=all.filter(v=>prefs[v.name]);
+  el.innerHTML=set.length?set.map(v=>`<span style="margin-right:10px"><strong style="color:var(--purple)">${v.name}:</strong> ${prefs[v.name]}</span>`).join(''):'Complete the phases above to see your full preferred form here.';
+}
+function renderExplorer(){
+  const schedData=[['Week 1 (June 15–21)','var(--orange)','Takeoff foot · Landing foot'],['Week 2 (June 22–28)','var(--orange)','Hop direction · Pivot / turn'],['Week 3 (June 29–Jul 5)','var(--orange)','Foot width · Hip & knee load · Balance weight'],['Week 4 (July 6–12)','var(--red)','Arc · Ball set point'],['Week 5 (July 13–19)','var(--red)','Guide hand'],['Week 6 (July 20–26)','var(--violet)','Shot rhythm'],['Week 7 (July 27–Aug 2)','var(--violet)','Follow-through · Eye target'],['Week 8 (Aug 3–9)','var(--green)','Full form under fatigue'],['Week 9 (Aug 10–16)','var(--blue)','Game-speed benchmark']];
+  document.getElementById('explorer-schedule').innerHTML=schedData.map(([wk,col,vars],i)=>`<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px;${i===8?'border-bottom:none':''}"><span style="font-weight:700;color:${col};min-width:130px">${wk}</span><span style="color:var(--mid)">${vars}</span></div>`).join('');
+  document.getElementById('explorer-phases').innerHTML=DL_PHASES.map(phase=>{
+    const pc=PC[phase.key];
+    return`<div class="card" style="border-left:4px solid ${pc.border}">
+      <div style="font-size:13px;font-weight:700;color:${pc.color};margin-bottom:8px">${phase.title}</div>
+      ${phase.vars.map(v=>{
+        const gid='g'+v.name.replace(/[^a-z]/gi,'');
+        return`<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="font-size:12px;font-weight:700;color:${pc.color};margin-bottom:6px">${v.name} <span style="font-size:10px;font-weight:500;color:var(--light)">(Week ${v.week})</span></div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            ${v.opts.map(opt=>{
+              const sel=prefs[v.name]===opt;
+              return`<button class="pg-${gid}" style="${sel?'background:var(--purple);color:white;border-color:var(--purple);font-weight:700':'background:var(--white);color:var(--dark);border-color:var(--border);font-weight:500'};padding:5px 10px;border-radius:6px;border:1.5px solid;cursor:pointer;font-size:11px;font-family:inherit;transition:all .15s"
+                onclick="selectPref('${v.name}','${opt.replace(/'/g,"\\'")}',this,'${gid}')">${opt}</button>`;
+            }).join('')}
+          </div>
+          <div style="font-size:11px;margin-top:4px;${prefs[v.name]?'color:var(--purple);font-weight:700':'color:var(--light)'}">
+            ${prefs[v.name]?`✓ My preferred ${v.name.toLowerCase()}: ${prefs[v.name]}`:`My preferred ${v.name.toLowerCase()}: not yet selected`}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+  updateConfirmSummary();
+}
+function saveExplorer(){
+  const name=document.getElementById('explorer-name').value.trim();
+  const score=parseInt(document.getElementById('explorer-score').value);
+  if(!name){showToast('Enter your name');return;}
+  const set=DL_PHASES.flatMap(p=>p.vars).filter(v=>prefs[v.name]);
+  if(set.length<5){showToast('Complete more exploration phases first');return;}
+  scores[`EXPLORER__${name}`]={name,type:'explorer',prefs:{...prefs},score,ts:Date.now()};
+  save();showToast('Form saved! ✅');
+}
+
+// ── COACH ADMIN ───────────────────────────────────────
+function checkPin(val){
+  if(val.length===4){
+    if(val===COACH_PIN){
+      adminUnlocked=true;
+      document.getElementById('pin-screen').style.display='none';
+      document.getElementById('admin-panel').style.display='block';
+      renderAdminPanel();
+    }else{
+      document.getElementById('pin-error').style.display='block';
+      document.getElementById('pin-input').value='';
+    }
+  }
+}
+function lockAdmin(){
+  adminUnlocked=false;
+  document.getElementById('pin-screen').style.display='block';
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-error').style.display='none';
+}
+function renderCoach(){
+  if(!adminUnlocked) return;
+  renderAdminPanel();
+}
+function renderAdminPanel(){
+  renderTeamsList();
+  renderAttendanceLog();
+  // Populate week select
+  const attWk=document.getElementById('att-week');
+  if(!attWk.options.length) WEEKS.forEach(w=>{const o=document.createElement('option');o.value=w.n;o.textContent=`Week ${w.n} (${w.dates})`;if(w.n===CUR_WEEK)o.selected=true;attWk.appendChild(o);});
+  // Populate player select
+  updatePlayerSelect();
+}
+function updatePlayerSelect(){
+  const sel=document.getElementById('att-player');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— select player —</option>';
+  const allPlayers=[...new Set(Object.values(teams).flatMap(t=>t.players||[]))].sort();
+  allPlayers.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;if(p===cur)o.selected=true;sel.appendChild(o);});
+}
+function addTeam(){
+  const name=document.getElementById('new-team-name').value.trim();
+  const playersRaw=document.getElementById('new-team-players').value.trim();
+  if(!name){showToast('Enter a team name');return;}
+  const players=playersRaw.split('\n').map(p=>p.trim()).filter(Boolean);
+  if(!players.length){showToast('Add at least one player');return;}
+  teams[name]={players};
+  save();
+  document.getElementById('new-team-name').value='';
+  document.getElementById('new-team-players').value='';
+  renderTeamsList();
+  updatePlayerSelect();
+  renderMyTeamCard();
+  showToast(`Team "${name}" added!`);
+}
+function deleteTeam(name){
+  if(!confirm(`Delete team "${name}"?`)) return;
+  delete teams[name];
+  save();renderTeamsList();updatePlayerSelect();renderMyTeamCard();
+  showToast('Team deleted');
+}
+function renderTeamsList(){
+  const el=document.getElementById('teams-list');
+  const names=Object.keys(teams);
+  if(!names.length){el.innerHTML='<div style="font-size:12px;color:var(--light)">No teams yet.</div>';return;}
+  el.innerHTML=names.map(n=>`
+    <div class="card" style="margin-bottom:8px;padding:10px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-weight:700;font-size:13px;color:var(--purple)">${n}</div>
+        <button class="btn btn-danger" style="padding:4px 10px;font-size:11px" onclick="deleteTeam('${n}')">Delete</button>
+      </div>
+      <div>${(teams[n].players||[]).map(p=>`<span class="player-tag">${p}</span>`).join('')}</div>
+    </div>`).join('');
+}
+function toggleAtt(type){
+  attSelected[type]=!attSelected[type];
+  const el=document.getElementById('att-'+type);
+  el.classList.toggle('selected',attSelected[type]);
+}
+function logAttendance(){
+  const player=document.getElementById('att-player').value;
+  const wn=parseInt(document.getElementById('att-week').value);
+  if(!player){showToast('Select a player');return;}
+  const types=Object.entries(attSelected).filter(([,v])=>v).map(([k])=>k);
+  if(!types.length){showToast('Select at least one activity');return;}
+  const key=`${player}__w${wn}`;
+  if(!attendance[key]) attendance[key]={practice:0,lifting:0,game:0};
+  types.forEach(t=>attendance[key][t]=(attendance[key][t]||0)+1);
+  save();
+  // Reset toggles
+  attSelected={practice:false,lifting:false,game:false};
+  ['practice','lifting','game'].forEach(t=>document.getElementById('att-'+t).classList.remove('selected'));
+  renderAttendanceLog();
+  showToast(`Attendance logged for ${player} — Week ${wn}`);
+}
+function renderAttendanceLog(){
+  const el=document.getElementById('attendance-log');
+  const entries=[];
+  Object.entries(attendance).forEach(([key,val])=>{
+    const [name,wPart]=key.split('__');
+    const wn=parseInt(wPart.replace('w',''));
+    const pts=(val.practice||0)*5+(val.lifting||0)*5+(val.game||0)*5;
+    if(pts>0) entries.push({name,wn,practice:val.practice||0,lifting:val.lifting||0,game:val.game||0,pts});
+  });
+  entries.sort((a,b)=>b.wn-a.wn||a.name.localeCompare(b.name));
+  if(!entries.length){el.innerHTML='<div style="font-size:12px;color:var(--light)">No attendance logged yet.</div>';return;}
+  el.innerHTML=`<div class="card" style="padding:0">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:8px 10px;color:var(--light);font-size:11px">Player</th>
+        <th style="text-align:center;padding:8px 6px;color:var(--light);font-size:11px">Wk</th>
+        <th style="text-align:center;padding:8px 6px;color:var(--light);font-size:11px">Practice</th>
+        <th style="text-align:center;padding:8px 6px;color:var(--light);font-size:11px">Lifting</th>
+        <th style="text-align:center;padding:8px 6px;color:var(--light);font-size:11px">Game</th>
+        <th style="text-align:right;padding:8px 10px;color:var(--light);font-size:11px">Pts</th>
+      </tr></thead>
+      <tbody>${entries.map(e=>`<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:7px 10px;font-weight:600">${e.name}</td>
+        <td style="padding:7px 6px;text-align:center;color:var(--light)">${e.wn}</td>
+        <td style="padding:7px 6px;text-align:center">${e.practice||'—'}</td>
+        <td style="padding:7px 6px;text-align:center">${e.lifting||'—'}</td>
+        <td style="padding:7px 6px;text-align:center">${e.game||'—'}</td>
+        <td style="padding:7px 10px;text-align:right;font-weight:800;color:var(--purple)">${e.pts}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+}
+function resetAll(){
+  if(!confirm('Reset ALL data? This cannot be undone.')) return;
+  scores={};teams={};attendance={};prefs={};save();
+  showToast('All data reset');
+  renderTeamsList();renderAttendanceLog();renderMyTeamCard();
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+
+// ── INIT ──────────────────────────────────────────────
+updateCountdown();setInterval(updateCountdown,60000);
+renderSchedule();renderMyTeamCard();
+buildWeekStrip('workout-week-strip',CUR_WEEK,'setWorkoutWeek');setWorkoutWeek(CUR_WEEK);
+buildWeekStrip('board-week-strip',CUR_WEEK,'setBoardWeek');renderBoard();
+setTimeout(renderLogInputs,100);
+</script>
+</body>
+</html>
